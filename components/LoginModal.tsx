@@ -1,0 +1,71 @@
+import React, { useState } from 'react';
+import { login } from '../services/authService';
+import type { User } from '../types';
+import GitHubIcon from './icons/GitHubIcon';
+
+interface LoginModalProps {
+  onClose: () => void;
+  onSuccess: (user: User, token: string) => void;
+}
+
+const LoginModal: React.FC<LoginModalProps> = ({ onClose, onSuccess }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { user, token } = await login();
+      onSuccess(user, token);
+    } catch (err) {
+      setError('Login failed. Please try again.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-gray-800 rounded-xl shadow-2xl p-8 w-full max-w-md m-4 text-center border border-gray-700"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-2xl font-bold text-white mb-2">Login to Sync Favorites</h2>
+        <p className="text-gray-400 mb-6">
+          Log in with your GitHub account (simulated) to save and sync your favorite characters across devices.
+        </p>
+
+        {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+        
+        <button
+          onClick={handleLogin}
+          disabled={isLoading}
+          className="w-full flex items-center justify-center space-x-3 px-4 py-3 bg-gray-900 hover:bg-black rounded-lg text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? (
+            <div className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+          ) : (
+            <>
+              <GitHubIcon />
+              <span>Login with GitHub</span>
+            </>
+          )}
+        </button>
+
+        <button 
+          onClick={onClose}
+          className="mt-4 text-gray-400 hover:text-white text-sm"
+        >
+          Maybe later
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default LoginModal;
