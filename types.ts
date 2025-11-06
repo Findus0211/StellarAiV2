@@ -1,6 +1,6 @@
 import type { GroundingChunk } from '@google/genai';
 
-export type AppMode = 'chat' | 'image' | 'bsd' | 'code';
+export type AppMode = 'chat' | 'image' | 'bsd' | 'code' | 'chess';
 
 export interface ChatMessage {
   role: 'user' | 'model';

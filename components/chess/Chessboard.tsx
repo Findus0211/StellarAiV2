@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Chess } from 'chess.js';
 import type { Square, Piece } from 'chess.js';
-import ChessPiece from './Piece';
+import ChessPiece from './Piece.tsx';
 
 interface ChessboardProps {
   fen: string;

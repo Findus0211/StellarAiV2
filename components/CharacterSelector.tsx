@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { BUNGO_CHARACTERS } from '../constants';
-import type { Character, User } from '../types';
-import useFavorites from './icons/hooks/useFavorites';
-import StarIcon from './icons/StarIcon';
+import { BUNGO_CHARACTERS } from '../constants.ts';
+import type { Character, User } from '../types.ts';
+import useFavorites from './icons/hooks/useFavorites.ts';
+import StarIcon from './icons/StarIcon.tsx';
 
 interface CharacterSelectorProps {
   onSelectCharacter: (character: Character) => void;

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { User } from '../../../types';
-import useLocalStorage from './useLocalStorage';
-import { saveFavorites, loadFavorites } from '../../../services/githubService';
+import type { User } from '../../../types.ts';
+import useLocalStorage from './useLocalStorage.ts';
+import { saveFavorites, loadFavorites } from '../../../services/githubService.ts';
 
 interface UseFavoritesProps {
   user: User | null;

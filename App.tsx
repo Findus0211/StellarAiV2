@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import type { User, Character, AppMode } from './types';
-import Header from './components/Header';
-import ChatWindow from './components/ChatWindow';
-import ImageGenerator from './components/ImageGenerator';
-import LoginModal from './components/LoginModal';
-import SettingsModal from './components/SettingsModal';
-import CharacterSelector from './components/CharacterSelector';
-import useLocalStorage from './components/icons/hooks/useLocalStorage';
-import { logout as authLogout, getCurrentUser } from './services/authService';
+import type { User, Character, AppMode } from './types.ts';
+import Header from './components/Header.tsx';
+import ChatWindow from './components/ChatWindow.tsx';
+import ImageGenerator from './components/ImageGenerator.tsx';
+import LoginModal from './components/LoginModal.tsx';
+import SettingsModal from './components/SettingsModal.tsx';
+import CharacterSelector from './components/CharacterSelector.tsx';
+import ChessMode from './components/ChessMode.tsx';
+import useLocalStorage from './components/icons/hooks/useLocalStorage.ts';
+import { logout as authLogout, getCurrentUser } from './services/authService.ts';
 
 export type AiModel = 'gemini' | 'claude' | 'chatgpt';
 export interface AppSettings {
@@ -149,6 +150,7 @@ const App: React.FC = () => {
           />
         )}
         {mode === 'image' && <ImageGenerator />}
+        {mode === 'chess' && <ChessMode />}
         {mode === 'bsd' && !selectedCharacter && (
           <CharacterSelector 
             onSelectCharacter={handleSelectCharacter}

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import type { User } from '../types';
-import LoginIcon from './icons/LoginIcon';
-import SettingsIcon from './icons/SettingsIcon';
+import type { User } from '../types.ts';
+import LoginIcon from './icons/LoginIcon.tsx';
+import SettingsIcon from './icons/SettingsIcon.tsx';
 
 interface HeaderProps {
   user: User | null;

@@ -1,4 +1,4 @@
-import { encrypt, decrypt } from './encryptionService';
+import { encrypt, decrypt } from './encryptionService.ts';
 
 const GITHUB_STORAGE_KEY_PREFIX = 'github_storage_';
 

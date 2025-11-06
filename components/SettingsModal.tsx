@@ -1,6 +1,6 @@
 import React from 'react';
-import type { AppSettings, AiModel } from '../App';
-import type { AppMode } from '../types';
+import type { AppSettings, AiModel } from '../App.tsx';
+import type { AppMode } from '../types.ts';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -16,6 +16,7 @@ const APP_MODES: { id: AppMode, name: string, description: string }[] = [
     { id: 'bsd', name: 'BSD Mode', description: 'Converse with characters from Bungo Stray Dogs.' },
     { id: 'image', name: 'Image Generation', description: 'Create visuals from text prompts.' },
     { id: 'code', name: 'Coding Assistant', description: 'Get help with programming and code.' },
+    { id: 'chess', name: 'Chess Mode', description: 'Play a game of chess against the AI.' },
 ];
 
 

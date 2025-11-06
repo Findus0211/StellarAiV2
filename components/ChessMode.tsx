@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Chess } from 'chess.js';
 import { GoogleGenAI } from '@google/genai';
-import Chessboard from './chess/Chessboard';
+import Chessboard from './chess/Chessboard.tsx';
 
 type PlayerColor = 'w' | 'b';
 

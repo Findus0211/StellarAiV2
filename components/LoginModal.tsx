@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { login } from '../services/authService';
-import type { User } from '../types';
-import GitHubIcon from './icons/GitHubIcon';
+import { login } from '../services/authService.ts';
+import type { User } from '../types.ts';
+import GitHubIcon from './icons/GitHubIcon.tsx';
 
 interface LoginModalProps {
   onClose: () => void;

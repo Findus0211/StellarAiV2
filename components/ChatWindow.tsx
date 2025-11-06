@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GoogleGenAI } from '@google/genai';
 import type { Chat } from '@google/genai';
-import type { ChatMessage, Character } from '../types';
-import useLocalStorage from './icons/hooks/useLocalStorage';
-import BotIcon from './icons/BotIcon';
-import UserIcon from './icons/UserIcon';
-import SendIcon from './icons/SendIcon';
-import BackIcon from './icons/BackIcon';
+import type { ChatMessage, Character } from '../types.ts';
+import useLocalStorage from './icons/hooks/useLocalStorage.ts';
+import BotIcon from './icons/BotIcon.tsx';
+import UserIcon from './icons/UserIcon.tsx';
+import SendIcon from './icons/SendIcon.tsx';
+import BackIcon from './icons/BackIcon.tsx';
 
 interface ChatWindowProps {
   chatId: string;

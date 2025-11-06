@@ -1,4 +1,4 @@
-import type { Character } from './types';
+import type { Character } from './types.ts';
 
 export const BUNGO_CHARACTERS: Character[] = [
   {
