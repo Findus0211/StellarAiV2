@@ -19,6 +19,7 @@ const BASE_APP_MODES: { id: AppMode, name: string, description: string }[] = [
     { id: 'code', name: 'Coding Assistant', description: 'Get help with programming and code.' },
     { id: 'bsd', name: 'BSD Mode', description: 'Converse with characters from Bungo Stray Dogs.' },
     { id: 'image', name: 'Image Generation', description: 'Create visuals from text prompts.' },
+    { id: 'video', name: 'Video Generation', description: 'Create videos from text prompts using Veo.' },
     { id: 'chess', name: 'Chess Mode', description: 'Play a game of chess against the AI.' },
 ];
 

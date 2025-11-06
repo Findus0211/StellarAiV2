@@ -4,6 +4,7 @@ import type { User, Character, AppMode } from './types.ts';
 import Header from './components/Header.tsx';
 import ChatWindow from './components/ChatWindow.tsx';
 import ImageGenerator from './components/ImageGenerator.tsx';
+import VideoGenerator from './components/VideoGenerator.tsx';
 import LoginModal from './components/LoginModal.tsx';
 import SettingsModal from './components/SettingsModal.tsx';
 import CharacterSelector from './components/CharacterSelector.tsx';
@@ -228,6 +229,7 @@ const App: React.FC = () => {
           />
         )}
         {mode === 'image' && <ImageGenerator />}
+        {mode === 'video' && <VideoGenerator />}
         {mode === 'chess' && <ChessMode />}
         {mode === 'bsd' && !selectedCharacter && (
           <CharacterSelector 
