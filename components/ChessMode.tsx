@@ -48,7 +48,7 @@ const ChessMode: React.FC = () => {
 The current board state in FEN is: ${currentFen}
 The game history in PGN is: ${pgn}
 It is your turn to move. Your color is ${gameCopy.turn() === 'w' ? 'white' : 'black'}.
-Analyze the position and provide your best move in Standard Algebraic Notation (SAN).
+Analyze the position and provide a good move quickly in Standard Algebraic Notation (SAN).
 Respond with ONLY the move in SAN format (e.g., "e4", "Nf3", "O-O"). Do not add any explanation or commentary.`;
 
     try {
@@ -59,7 +59,10 @@ Respond with ONLY the move in SAN format (e.g., "e4", "Nf3", "O-O"). Do not add 
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: prompt,
-            config: { temperature: 0.3 }
+            config: { 
+                temperature: 0,
+                thinkingConfig: { thinkingBudget: 0 } 
+            }
         });
         const move = response.text.trim();
 
@@ -94,8 +97,7 @@ Respond with ONLY the move in SAN format (e.g., "e4", "Nf3", "O-O"). Do not add 
   useEffect(() => {
     const isAiTurn = !showNewGameDialog && game.turn() !== playerColor && !game.isGameOver();
     if (isAiTurn) {
-      const timer = setTimeout(() => getAiMove(), 500);
-      return () => clearTimeout(timer);
+      getAiMove();
     }
   }, [game, playerColor, showNewGameDialog, getAiMove]);
 

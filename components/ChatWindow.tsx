@@ -7,6 +7,7 @@ import BotIcon from './icons/BotIcon.tsx';
 import UserIcon from './icons/UserIcon.tsx';
 import SendIcon from './icons/SendIcon.tsx';
 import BackIcon from './icons/BackIcon.tsx';
+import type { PerformanceMode } from '../App.tsx';
 
 interface ChatWindowProps {
   chatId: string;
@@ -18,7 +19,7 @@ interface ChatWindowProps {
   character?: Character;
   onBack?: () => void;
   isNsfw?: boolean;
-  deepThinking?: boolean;
+  performanceMode?: PerformanceMode;
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -31,7 +32,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   character,
   onBack,
   isNsfw,
-  deepThinking = false,
+  performanceMode = 'standard',
 }) => {
   const [messages, setMessages] = useLocalStorage<ChatMessage[]>(`chatHistory-${chatId}`, []);
   const [userInput, setUserInput] = useState('');
@@ -49,16 +50,30 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           systemInstruction: systemPrompt,
         };
         
-        let budget = 0;
+        let budget: number | undefined = undefined;
+
         if (enableSearch) {
           config.tools = [{googleSearch: {}}];
-          budget = 8192;
+          budget = 8192; // Default budget for search
         }
-        if (deepThinking) {
-          budget = 16384; // Higher budget for deep thinking overrides others.
+        
+        // Performance mode can override the budget
+        switch (performanceMode) {
+            case 'deep':
+                budget = 16384;
+                break;
+            case 'quick':
+                budget = 2048;
+                break;
+            case 'extreme':
+                budget = 0;
+                break;
+            case 'standard':
+                // Uses default budget (8192 if search is on, else undefined)
+                break;
         }
 
-        if (budget > 0) {
+        if (budget !== undefined) {
           config.thinkingConfig = { thinkingBudget: budget };
         }
 
@@ -87,7 +102,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     };
     initChat();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [systemPrompt, initialGreeting, enableSearch, chatId, deepThinking]);
+  }, [systemPrompt, initialGreeting, enableSearch, chatId, performanceMode]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
