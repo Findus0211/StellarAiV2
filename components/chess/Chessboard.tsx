@@ -81,7 +81,7 @@ const Chessboard: React.FC<ChessboardProps> = ({ fen, onMove, playerColor, isAiT
               <div
                 key={square}
                 onClick={() => handleSquareClick(square)}
-                className={`w-[12.5%] aspect-square flex items-center justify-center relative ${isLight ? 'bg-gray-400' : 'bg-gray-700'}`}
+                className={`w-[12.5%] aspect-square flex items-center justify-center relative ${isLight ? 'bg-[var(--chess-light-square)]' : 'bg-[var(--chess-dark-square)]'}`}
               >
                 {isSelected && <div className="absolute inset-0 bg-yellow-500/50"></div>}
                 

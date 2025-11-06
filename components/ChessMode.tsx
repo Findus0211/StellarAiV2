@@ -129,19 +129,19 @@ Respond with ONLY the move in SAN format (e.g., "e4", "Nf3", "O-O"). Do not add 
   
   const NewGameDialog = () => (
     <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-10">
-        <div className="bg-gray-800 p-8 rounded-lg shadow-xl text-center">
+        <div className="bg-[var(--background-secondary)] p-8 rounded-lg shadow-xl text-center">
             <h2 className="text-2xl font-bold mb-4">Start a New Game</h2>
-            <p className="text-gray-400 mb-6">Choose your side to begin.</p>
+            <p className="text-[var(--text-secondary)] mb-6">Choose your side to begin.</p>
             <div className="flex justify-center gap-4">
-                <button onClick={() => startNewGame('w')} className="px-8 py-3 bg-gray-200 text-gray-900 font-bold rounded hover:bg-white transition-colors">Play as White</button>
-                <button onClick={() => startNewGame('b')} className="px-8 py-3 bg-gray-900 text-white font-bold rounded border border-gray-600 hover:bg-black transition-colors">Play as Black</button>
+                <button onClick={() => startNewGame('w')} className="px-8 py-3 bg-[var(--button-secondary-background)] text-[var(--button-secondary-text)] font-bold rounded hover:bg-[var(--button-secondary-hover)] transition-colors">Play as White</button>
+                <button onClick={() => startNewGame('b')} className="px-8 py-3 bg-[var(--background-primary)] text-[var(--text-primary)] font-bold rounded border border-[var(--border-secondary)] hover:bg-black transition-colors">Play as Black</button>
             </div>
         </div>
     </div>
   );
 
   return (
-    <div className="flex flex-col md:flex-row h-full bg-gray-800 text-white p-4 gap-4">
+    <div className="flex flex-col md:flex-row h-full bg-[var(--background-secondary)] text-[var(--text-primary)] p-4 gap-4">
        {showNewGameDialog && <NewGameDialog />}
        
       {/* Chessboard */}
@@ -155,11 +155,11 @@ Respond with ONLY the move in SAN format (e.g., "e4", "Nf3", "O-O"). Do not add 
       </div>
 
       {/* Controls and Info */}
-      <div className="w-full md:w-80 bg-gray-900 p-4 rounded-lg flex flex-col">
-        <h2 className="text-2xl font-bold mb-4 text-center border-b border-gray-700 pb-3"><span className="text-blue-400">Stellar</span>Chess</h2>
+      <div className="w-full md:w-80 bg-[var(--background-primary)] p-4 rounded-lg flex flex-col">
+        <h2 className="text-2xl font-bold mb-4 text-center border-b border-[var(--border-primary)] pb-3"><span className="text-[var(--accent-text)]">Stellar</span>Chess</h2>
         
         <div className="mb-4">
-            <label htmlFor="elo-slider" className="block mb-2 font-semibold text-gray-300">AI Strength (ELO: {elo})</label>
+            <label htmlFor="elo-slider" className="block mb-2 font-semibold text-[var(--text-primary)]">AI Strength (ELO: {elo})</label>
             <input 
                 id="elo-slider"
                 type="range" 
@@ -168,16 +168,16 @@ Respond with ONLY the move in SAN format (e.g., "e4", "Nf3", "O-O"). Do not add 
                 step="100"
                 value={elo}
                 onChange={(e) => setElo(parseInt(e.target.value, 10))}
-                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                className="w-full h-2 bg-[var(--background-tertiary)] rounded-lg appearance-none cursor-pointer"
             />
         </div>
 
-        <div className="bg-gray-800 p-3 rounded-md mb-4 text-center">
+        <div className="bg-[var(--background-secondary)] p-3 rounded-md mb-4 text-center">
             <p className="font-semibold text-lg">{status}</p>
         </div>
 
-        <div className="flex-1 bg-gray-800 rounded-md p-2 overflow-y-auto">
-            <ol className="list-decimal list-inside text-gray-300">
+        <div className="flex-1 bg-[var(--background-secondary)] rounded-md p-2 overflow-y-auto">
+            <ol className="list-decimal list-inside text-[var(--text-primary)]">
                 {history.map((move, i) => (
                     i % 2 === 0 && (
                         <li key={i} className="px-2 py-1 flex">
@@ -192,7 +192,7 @@ Respond with ONLY the move in SAN format (e.g., "e4", "Nf3", "O-O"). Do not add 
         
         <button 
             onClick={() => setShowNewGameDialog(true)}
-            className="mt-4 w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors"
+            className="mt-4 w-full px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors"
         >
             New Game
         </button>

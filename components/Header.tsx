@@ -25,33 +25,33 @@ const Header: React.FC<HeaderProps> = ({ user, onLogin, onLogout, onOpenSettings
   }, []);
 
   return (
-    <header className="bg-gray-900/70 backdrop-blur-sm shadow-lg p-3 sm:p-4 flex justify-between items-center z-20 flex-shrink-0">
-      <h1 className="text-xl sm:text-2xl font-bold text-white tracking-wider">
-        <span className="text-blue-400">Stellar</span>Ai
+    <header className="bg-[var(--background-primary)]/80 backdrop-blur-sm shadow-lg p-3 sm:p-4 flex justify-between items-center z-20 flex-shrink-0 border-b border-[var(--border-primary)]">
+      <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] tracking-wider">
+        <span className="text-[var(--accent-text)]">Stellar</span>Ai
       </h1>
       <div className="flex items-center space-x-2 sm:space-x-4">
         <button 
           onClick={onOpenSettings}
-          className="p-2 rounded-full hover:bg-gray-700 transition-colors"
+          className="p-2 rounded-full hover:bg-[var(--background-interactive-hover)] transition-colors"
           aria-label="Open Settings"
         >
           <SettingsIcon />
         </button>
 
-        <div className="h-8 border-l border-gray-600"></div>
+        <div className="h-8 border-l border-[var(--border-secondary)]"></div>
 
         <div className="relative">
             {user ? (
                 <div className="flex items-center">
                     <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center space-x-2">
-                        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-[var(--accent-primary)] flex items-center justify-center">
                           <LoginIcon />
                         </div>
-                        <span className="text-white font-semibold hidden sm:inline">{user.email}</span>
+                        <span className="text-[var(--text-primary)] font-semibold hidden sm:inline">{user.email}</span>
                     </button>
                     {dropdownOpen && (
-                        <div ref={dropdownRef} className="absolute top-12 right-0 bg-gray-800 rounded-md shadow-lg w-48 py-1">
-                            <button onClick={onLogout} className="flex items-center w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700">
+                        <div ref={dropdownRef} className="absolute top-12 right-0 bg-[var(--background-secondary)] rounded-md shadow-lg w-48 py-1 border border-[var(--border-primary)]">
+                            <button onClick={onLogout} className="flex items-center w-full text-left px-4 py-2 text-sm text-[var(--danger-text)] hover:bg-[var(--background-interactive-hover)]">
                                 Logout
                             </button>
                         </div>
@@ -60,10 +60,10 @@ const Header: React.FC<HeaderProps> = ({ user, onLogin, onLogout, onOpenSettings
             ) : (
                 <button 
                   onClick={onLogin} 
-                  className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-md transition-colors"
+                  className="flex items-center space-x-2 px-3 py-2 bg-[var(--background-secondary)] hover:bg-[var(--background-interactive-hover)] rounded-md transition-colors"
                 >
                     <LoginIcon />
-                    <span className="text-white font-semibold">Login</span>
+                    <span className="text-[var(--text-primary)] font-semibold">Login</span>
                 </button>
             )}
         </div>

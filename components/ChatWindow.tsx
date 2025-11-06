@@ -140,12 +140,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-800">
-      <div className="flex items-center p-3 border-b border-gray-700 bg-gray-900 flex-shrink-0">
+    <div className="flex flex-col h-full bg-[var(--background-secondary)]">
+      <div className="flex items-center p-3 border-b border-[var(--border-primary)] bg-[var(--background-primary)] flex-shrink-0">
         {onBack && (
           <button 
             onClick={onBack} 
-            className="p-2 mr-2 -ml-2 rounded-full hover:bg-gray-700 transition-colors"
+            className="p-2 mr-2 -ml-2 rounded-full hover:bg-[var(--background-interactive-hover)] transition-colors"
             aria-label="Back to character selection"
           >
             <BackIcon />
@@ -154,7 +154,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         {character && (
             <img src={character.image} alt={character.name} className="w-10 h-10 rounded-full mr-3 object-cover" />
         )}
-        <h2 className="text-xl font-semibold text-white truncate">{character ? character.name : chatTitle}</h2>
+        <h2 className="text-xl font-semibold text-[var(--text-primary)] truncate">{character ? character.name : chatTitle}</h2>
       </div>
 
       <div className="flex-grow p-4 overflow-y-auto">
@@ -162,19 +162,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           {messages.map((msg, index) => (
             <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : ''}`}>
               {msg.role === 'model' && (
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--background-tertiary)] flex items-center justify-center">
                   {character ? <img src={character.image} alt={character.name} className="w-full h-full rounded-full object-cover" /> : <BotIcon />}
                 </div>
               )}
-              <div className={`p-3 rounded-2xl max-w-md md:max-w-lg ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-700 text-gray-200 rounded-bl-none'}`}>
+              <div className={`p-3 rounded-2xl max-w-md md:max-w-lg ${msg.role === 'user' ? 'bg-[var(--accent-primary)] text-white rounded-br-none' : 'bg-[var(--background-tertiary)] text-[var(--text-primary)] rounded-bl-none'}`}>
                  <p className="whitespace-pre-wrap">{msg.content}</p>
                  {msg.groundingChunks && msg.groundingChunks.length > 0 && (
-                  <div className="mt-3 pt-2 border-t border-gray-600">
-                    <h4 className="text-xs font-semibold text-gray-400 mb-2">Sources:</h4>
+                  <div className="mt-3 pt-2 border-t border-[var(--border-secondary)]">
+                    <h4 className="text-xs font-semibold text-[var(--text-secondary)] mb-2">Sources:</h4>
                     <div className="flex flex-wrap gap-2">
                       {msg.groundingChunks.map((chunk, i) => (
                         chunk.web?.uri && (
-                          <a href={chunk.web.uri} key={i} target="_blank" rel="noopener noreferrer" className="text-xs bg-gray-600 hover:bg-gray-500 text-blue-300 px-2 py-1 rounded-full transition-colors truncate">
+                          <a href={chunk.web.uri} key={i} target="_blank" rel="noopener noreferrer" className="text-xs bg-[var(--background-hover)] hover:bg-[var(--background-interactive-hover)] text-[var(--accent-text)] px-2 py-1 rounded-full transition-colors truncate">
                             {chunk.web.title || new URL(chunk.web.uri).hostname}
                           </a>
                         )
@@ -183,16 +183,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                   </div>
                 )}
               </div>
-              {msg.role === 'user' && <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center"><UserIcon /></div>}
+              {msg.role === 'user' && <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--accent-primary)] flex items-center justify-center"><UserIcon /></div>}
             </div>
           ))}
           <div ref={messagesEndRef} />
         </div>
       </div>
 
-      <div className="p-4 bg-gray-900/80 backdrop-blur-sm border-t border-gray-700 flex-shrink-0">
-        {error && <p className="text-red-400 text-sm text-center mb-2">{error}</p>}
-        <div className="flex items-center bg-gray-700 rounded-lg">
+      <div className="p-4 bg-[var(--background-primary)]/80 backdrop-blur-sm border-t border-[var(--border-primary)] flex-shrink-0">
+        {error && <p className="text-[var(--danger-text)] text-sm text-center mb-2">{error}</p>}
+        <div className="flex items-center bg-[var(--background-tertiary)] rounded-lg">
           <input
             type="text"
             value={userInput}
@@ -200,15 +200,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             onKeyPress={handleKeyPress}
             placeholder={isLoading ? 'Waiting for response...' : placeholderText}
             disabled={isLoading}
-            className="w-full bg-transparent p-3 text-gray-200 placeholder-gray-400 focus:outline-none"
+            className="w-full bg-transparent p-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none"
           />
           <button
             onClick={handleSendMessage}
             disabled={isLoading || !userInput.trim()}
-            className="p-3 text-white rounded-r-lg disabled:text-gray-500 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+            className="p-3 text-white rounded-r-lg disabled:text-[var(--text-muted)] disabled:cursor-not-allowed hover:bg-[var(--accent-primary)] transition-colors"
           >
             {isLoading ? (
-                <div className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                <div className="w-5 h-5 border-2 border-t-transparent border-[var(--text-primary)] rounded-full animate-spin"></div>
             ) : (
                 <SendIcon />
             )}

@@ -11,11 +11,14 @@ import useLocalStorage from './components/icons/hooks/useLocalStorage.ts';
 import { logout as authLogout, getCurrentUser } from './services/authService.ts';
 
 export type AiModel = 'gemini' | 'claude' | 'chatgpt';
+export type Theme = 'dark' | 'black' | 'light';
+
 export interface AppSettings {
   aiModel: AiModel;
   isNsfw: boolean;
   deepThinking: boolean;
   humanEssayMode: boolean;
+  theme: Theme;
 }
 
 // Prompts
@@ -54,6 +57,7 @@ const App: React.FC = () => {
     isNsfw: false,
     deepThinking: false,
     humanEssayMode: false,
+    theme: 'dark',
   });
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useLocalStorage<string | null>('githubToken', null);
@@ -68,6 +72,11 @@ const App: React.FC = () => {
     }
   }, []);
   
+  // Apply theme to the root element
+  useEffect(() => {
+    document.documentElement.className = `theme-${settings.theme}`;
+  }, [settings.theme]);
+
   // Reset character selection when leaving BSD mode
   useEffect(() => {
     if (mode !== 'bsd') {
@@ -117,7 +126,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 font-sans">
+    <div className="flex flex-col h-screen bg-[var(--background-primary)] font-sans">
       <Header 
         user={user}
         onLogin={() => setLoginModalOpen(true)}

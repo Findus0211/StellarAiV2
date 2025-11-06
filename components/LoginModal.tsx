@@ -32,23 +32,23 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onSuccess }) => {
       onClick={onClose}
     >
       <div 
-        className="bg-gray-800 rounded-xl shadow-2xl p-8 w-full max-w-md m-4 text-center border border-gray-700"
+        className="bg-[var(--background-secondary)] rounded-xl shadow-2xl p-8 w-full max-w-md m-4 text-center border border-[var(--border-primary)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-2xl font-bold text-white mb-2">Login to Sync Favorites</h2>
-        <p className="text-gray-400 mb-6">
+        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Login to Sync Favorites</h2>
+        <p className="text-[var(--text-secondary)] mb-6">
           Log in with your GitHub account (simulated) to save and sync your favorite characters across devices.
         </p>
 
-        {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+        {error && <p className="text-[var(--danger-text)] text-sm mb-4">{error}</p>}
         
         <button
           onClick={handleLogin}
           disabled={isLoading}
-          className="w-full flex items-center justify-center space-x-3 px-4 py-3 bg-gray-900 hover:bg-black rounded-lg text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center space-x-3 px-4 py-3 bg-[var(--background-primary)] hover:bg-black rounded-lg text-[var(--text-primary)] font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? (
-            <div className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+            <div className="w-5 h-5 border-2 border-t-transparent border-[var(--text-primary)] rounded-full animate-spin"></div>
           ) : (
             <>
               <GitHubIcon />
@@ -59,7 +59,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onSuccess }) => {
 
         <button 
           onClick={onClose}
-          className="mt-4 text-gray-400 hover:text-white text-sm"
+          className="mt-4 text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-sm"
         >
           Maybe later
         </button>
