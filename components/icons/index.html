@@ -4,21 +4,107 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StellarAi Chat</title>
+    <base href="/StellarAiV2/" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      :root.theme-dark {
+        --background-body: #111827;
+        --background-primary: #111827;
+        --background-secondary: #1F2937;
+        --background-tertiary: #374151;
+        --background-hover: #4B5563;
+        --background-interactive-hover: #374151;
+        --background-interactive-selected: rgba(59, 130, 246, 0.2);
+        --text-primary: #F9FAFB;
+        --text-secondary: #9CA3AF;
+        --text-muted: #6B7280;
+        --border-primary: #374151;
+        --border-secondary: #4B5563;
+        --accent-primary: #3B82F6;
+        --accent-primary-hover: #2563EB;
+        --accent-text: #60A5FA;
+        --accent-border: #3B82F6;
+        --danger-text: #F87171;
+        --danger-background: #EF4444;
+        --scrollbar-track: #1F2937;
+        --scrollbar-thumb: #4B5563;
+        --scrollbar-thumb-hover: #6B7280;
+        --chess-light-square: #a0aec0;
+        --chess-dark-square: #374151;
+        --button-secondary-background: #E5E7EB;
+        --button-secondary-text: #1F2937;
+        --button-secondary-hover: #FFFFFF;
+      }
+      :root.theme-black {
+        --background-body: #000000;
+        --background-primary: #000000;
+        --background-secondary: #111827;
+        --background-tertiary: #1F2937;
+        --background-hover: #374151;
+        --background-interactive-hover: #1F2937;
+        --background-interactive-selected: rgba(59, 130, 246, 0.25);
+        --text-primary: #F9FAFB;
+        --text-secondary: #9CA3AF;
+        --text-muted: #6B7280;
+        --border-primary: #1F2937;
+        --border-secondary: #374151;
+        --accent-primary: #3B82F6;
+        --accent-primary-hover: #2563EB;
+        --accent-text: #60A5FA;
+        --accent-border: #3B82F6;
+        --danger-text: #F87171;
+        --danger-background: #EF4444;
+        --scrollbar-track: #111827;
+        --scrollbar-thumb: #374151;
+        --scrollbar-thumb-hover: #4B5563;
+        --chess-light-square: #a0aec0;
+        --chess-dark-square: #374151;
+        --button-secondary-background: #E5E7EB;
+        --button-secondary-text: #1F2937;
+        --button-secondary-hover: #FFFFFF;
+      }
+      :root.theme-light {
+        --background-body: #F9FAFB;
+        --background-primary: #FFFFFF;
+        --background-secondary: #F3F4F6;
+        --background-tertiary: #E5E7EB;
+        --background-hover: #D1D5DB;
+        --background-interactive-hover: #E5E7EB;
+        --background-interactive-selected: rgba(59, 130, 246, 0.1);
+        --text-primary: #111827;
+        --text-secondary: #6B7280;
+        --text-muted: #9CA3AF;
+        --border-primary: #E5E7EB;
+        --border-secondary: #D1D5DB;
+        --accent-primary: #2563EB;
+        --accent-primary-hover: #1D4ED8;
+        --accent-text: #2563EB;
+        --accent-border: #2563EB;
+        --danger-text: #EF4444;
+        --danger-background: #DC2626;
+        --scrollbar-track: #E5E7EB;
+        --scrollbar-thumb: #9CA3AF;
+        --scrollbar-thumb-hover: #6B7280;
+        --chess-light-square: #f0d9b5;
+        --chess-dark-square: #b58863;
+        --button-secondary-background: #374151;
+        --button-secondary-text: #F9FAFB;
+        --button-secondary-hover: #1F2937;
+      }
+
       /* For custom scrollbar styles */
       ::-webkit-scrollbar {
         width: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #1f2937; /* bg-gray-800 */
+        background: var(--scrollbar-track);
       }
       ::-webkit-scrollbar-thumb {
-        background: #4b5563; /* bg-gray-600 */
+        background: var(--scrollbar-thumb);
         border-radius: 4px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #6b7280; /* bg-gray-500 */
+        background: var(--scrollbar-thumb-hover);
       }
     </style>
   <script type="importmap">
@@ -34,8 +120,8 @@
 </script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-  <body class="bg-gray-900 text-gray-100">
+  <body class="bg-[var(--background-body)] text-[var(--text-primary)]">
     <div id="root"></div>
-    <script type="text/babel" data-presets="react,typescript" data-type="module" src="../../index.tsx"></script>
+    <script type="text/babel" data-presets="react,typescript" data-type="module" src="index.tsx"></script>
   </body>
 </html>
