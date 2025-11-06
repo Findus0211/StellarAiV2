@@ -32,21 +32,23 @@ const VideoGenerator: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [hasApiKey, setHasApiKey] = useState(false);
+    const [isStudioEnv, setIsStudioEnv] = useState(false);
 
     const messageIntervalRef = useRef<number | null>(null);
 
-    // Check for API key on mount
+    // Check for API key and environment on mount
     useEffect(() => {
-        const checkApiKey = async () => {
+        const checkEnvironment = async () => {
             if (window.aistudio && typeof window.aistudio.hasSelectedApiKey === 'function') {
+                setIsStudioEnv(true);
                 const hasKey = await window.aistudio.hasSelectedApiKey();
                 setHasApiKey(hasKey);
             } else {
-                console.warn("aistudio API key selection methods not found.");
-                // Fallback for local development if needed, or show an error
+                setIsStudioEnv(false);
+                console.warn("AI Studio environment not detected. Video generation will be disabled.");
             }
         };
-        checkApiKey();
+        checkEnvironment();
     }, []);
 
     // Cleanup video URL blob
@@ -81,6 +83,7 @@ const VideoGenerator: React.FC = () => {
     }, [isLoading]);
 
     const handleSelectKey = async () => {
+        if (!isStudioEnv) return;
         await window.aistudio.openSelectKey();
         // Assume key selection is successful and let the next API call verify.
         setHasApiKey(true);
@@ -146,6 +149,17 @@ const VideoGenerator: React.FC = () => {
         }
     };
     
+    if (!isStudioEnv) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full text-center p-4 bg-[var(--background-secondary)]">
+                <h2 className="text-2xl font-bold mb-2 text-[var(--text-primary)]">Video Generation Unavailable</h2>
+                <p className="text-[var(--text-secondary)] mb-6 max-w-lg">
+                    This feature requires the Google AI Studio environment to function correctly.
+                </p>
+            </div>
+        );
+    }
+
     if (!hasApiKey) {
         return (
             <div className="flex flex-col items-center justify-center h-full text-center p-4 bg-[var(--background-secondary)]">

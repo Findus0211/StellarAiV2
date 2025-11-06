@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import type { AppSettings, AiModel, Theme, PerformanceMode, ResponseStyle } from '../App.tsx';
 import type { AppMode } from '../types.ts';
-import useLocalStorage from './icons/hooks/useLocalStorage.ts';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -12,19 +11,15 @@ interface SettingsModalProps {
   setMode: (mode: AppMode) => void;
 }
 
-const BASE_APP_MODES: { id: AppMode, name: string, description: string }[] = [
+const APP_MODES: { id: AppMode, name: string, description: string }[] = [
     { id: 'chat', name: 'Standard Chat', description: 'Chat with a helpful AI assistant.' },
     { id: 'researcher', name: 'Researcher', description: 'Deep thinking with Google Search for detailed answers.' },
     { id: 'script_writer', name: 'Script Writer', description: 'Generate scripts for videos and content.' },
     { id: 'code', name: 'Coding Assistant', description: 'Get help with programming and code.' },
-    { id: 'bsd', name: 'BSD Mode', description: 'Converse with characters from Bungo Stray Dogs.' },
     { id: 'image', name: 'Image Generation', description: 'Create visuals from text prompts.' },
     { id: 'video', name: 'Video Generation', description: 'Create videos from text prompts using Veo.' },
     { id: 'chess', name: 'Chess Mode', description: 'Play a game of chess against the AI.' },
 ];
-
-const DARES_MODE = { id: 'dares_nsfw', name: 'Dares (NSFW)', description: 'A playful, dominant AI gives you escalating dares.' };
-
 
 const THEMES: { id: Theme, name: string }[] = [
     { id: 'light', name: 'Light' },
@@ -54,29 +49,13 @@ const RESPONSE_STYLES: { id: ResponseStyle, name: string, description: string }[
 
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings, onUpdateSettings, mode, setMode }) => {
-  const [daresUnlocked, setDaresUnlocked] = useLocalStorage('daresModeUnlocked', false);
-  const [filterClicks, setFilterClicks] = useState(0);
-
-  useEffect(() => {
-    if (filterClicks >= 3) {
-      setDaresUnlocked(true);
-    }
-  }, [filterClicks, setDaresUnlocked]);
-
-  const handleFilterClick = () => {
-    if (!daresUnlocked) {
-        setFilterClicks(c => c + 1);
-    }
-  };
-
+  
   if (!isOpen) return null;
 
   const handleUpdate = <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => {
     onUpdateSettings({ ...settings, [key]: value });
   };
   
-  const availableModes = daresUnlocked ? [...BASE_APP_MODES, DARES_MODE] : BASE_APP_MODES;
-
   return (
     <div 
       className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto p-4"
@@ -126,7 +105,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
         <div className="mb-8">
           <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Application Mode</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {availableModes.map(appMode => (
+            {APP_MODES.map(appMode => (
               <label 
                 key={appMode.id}
                 className={`flex flex-col p-3 rounded-lg border-2 transition-all cursor-pointer ${mode === appMode.id ? 'bg-[var(--background-interactive-selected)] border-[var(--accent-border)]' : 'bg-[var(--background-tertiary)] border-transparent hover:bg-[var(--background-hover)]'}`}
@@ -137,7 +116,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
                     name="app-mode"
                     value={appMode.id}
                     checked={mode === appMode.id}
-                    onChange={() => setMode(appMode.id)}
+                    onChange={() => setMode(appMode.id as AppMode)}
                     className="w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 focus:ring-blue-500"
                   />
                   <span className="ml-3 text-[var(--text-primary)] font-semibold">{appMode.name}</span>
@@ -228,9 +207,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
         {/* Content Filter */}
         <div>
           <h3 
-            className="text-lg font-semibold text-[var(--text-primary)] mb-3 cursor-pointer select-none"
-            onClick={handleFilterClick}
-            title={daresUnlocked ? "Dares Unlocked" : "???"}
+            className="text-lg font-semibold text-[var(--text-primary)] mb-3"
           >
             Content Filter
           </h3>
