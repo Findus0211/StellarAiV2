@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StellarAi Chat</title>
-    <base href="/StellarAiV2/" />
+    <base href="./" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       :root.theme-dark {
@@ -122,6 +122,41 @@
 </head>
   <body class="bg-[var(--background-body)] text-[var(--text-primary)]">
     <div id="root"></div>
-    <script type="text/babel" data-presets="react,typescript" data-type="module" src="src/index.tsx"></script>
+
+    <script>
+      let errorHandled = false;
+      function showErrorRedirect() {
+        if (errorHandled) return;
+        errorHandled = true;
+        
+        console.error("Application failed to load. Displaying fallback.");
+        
+        document.body.innerHTML = '';
+        window.stop();
+        document.body.className = 'bg-[var(--background-body)] text-[var(--text-primary)] flex flex-col items-center justify-center h-screen w-screen text-center p-4';
+        
+        const fallbackUI = document.createElement('div');
+        fallbackUI.className = 'bg-[var(--background-secondary)] p-8 rounded-lg shadow-2xl border border-[var(--border-primary)] max-w-lg';
+        fallbackUI.innerHTML = `
+            <h1 class="text-3xl font-bold text-[var(--danger-text)] mb-4">Oops! Application Failed to Load</h1>
+            <p class="text-[var(--text-secondary)] mb-6">The main application could not be loaded. This might be a temporary network issue or a script error.</p>
+            <p class="text-[var(--text-secondary)] mb-6">You can try to <a href="." class="text-[var(--accent-text)] underline">reload the page</a>, or switch to our stable backup version.</p>
+            <a href="backup.html" style="text-decoration: none;" class="inline-block px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors">Go to Backup Site</a>
+        `;
+        document.body.appendChild(fallbackUI);
+      };
+
+      // Catches runtime errors during initialization, before React renders.
+      const checkRootAndTrigger = (event) => {
+        const root = document.getElementById('root');
+        if (root && root.innerHTML === '') {
+          showErrorRedirect();
+        }
+      };
+      window.addEventListener('error', checkRootAndTrigger);
+      window.addEventListener('unhandledrejection', checkRootAndTrigger);
+    </script>
+    
+    <script type="text/babel" data-presets="react,typescript" data-type="module" src="index.tsx" onerror="showErrorRedirect()"></script>
   </body>
 </html>
