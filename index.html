@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StellarAi Chat</title>
-    <base href="/StellarAiV2/" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       :root.theme-dark {
@@ -155,6 +154,17 @@
       };
       window.addEventListener('error', checkRootAndTrigger);
       window.addEventListener('unhandledrejection', checkRootAndTrigger);
+      
+      // More robust check for silent failures after the page has loaded.
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+            const root = document.getElementById('root');
+            // If after a short delay the root is still empty, something is wrong.
+            if (root && root.innerHTML === '' && !errorHandled) {
+                showErrorRedirect();
+            }
+        }, 1000); // Wait 1 second
+      });
     </script>
     
     <script type="text/babel" data-presets="react,typescript" data-type="module" src="index.tsx" onerror="showErrorRedirect()"></script>

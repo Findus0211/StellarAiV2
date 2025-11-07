@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StellarAi Chat</title>
-    <base href="/StellarAiV2/" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       :root.theme-dark {
@@ -140,8 +139,8 @@
         fallbackUI.innerHTML = `
             <h1 class="text-3xl font-bold text-[var(--danger-text)] mb-4">Oops! Application Failed to Load</h1>
             <p class="text-[var(--text-secondary)] mb-6">The main application could not be loaded. This might be a temporary network issue or a script error.</p>
-            <p class="text-[var(--text-secondary)] mb-6">You can try to <a href="." class="text-[var(--accent-text)] underline">reload the page</a>, or switch to our stable backup version.</p>
-            <a href="backup.html" style="text-decoration: none;" class="inline-block px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors">Go to Backup Site</a>
+            <p class="text-[var(--text-secondary)] mb-6">You can try to <a href="./" class="text-[var(--accent-text)] underline">reload the page</a>, or switch to our stable backup version.</p>
+            <a href="../../backup.html" style="text-decoration: none;" class="inline-block px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors">Go to Backup Site</a>
         `;
         document.body.appendChild(fallbackUI);
       };
@@ -155,8 +154,17 @@
       };
       window.addEventListener('error', checkRootAndTrigger);
       window.addEventListener('unhandledrejection', checkRootAndTrigger);
+      
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+            const root = document.getElementById('root');
+            if (root && root.innerHTML === '' && !errorHandled) {
+                showErrorRedirect();
+            }
+        }, 1000);
+      });
     </script>
     
-    <script type="text/babel" data-presets="react,typescript" data-type="module" src="index.tsx" onerror="showErrorRedirect()"></script>
+    <script type="text/babel" data-presets="react,typescript" data-type="module" src="../../index.tsx" onerror="showErrorRedirect()"></script>
   </body>
 </html>
