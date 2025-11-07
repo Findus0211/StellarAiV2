@@ -118,7 +118,8 @@ const VideoGenerator: React.FC = () => {
             }
 
             if (operation.error) {
-                throw new Error(operation.error.message);
+                // FIX: Cast the error message to a string to resolve the type error.
+                throw new Error(String(operation.error.message));
             }
 
             const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;

@@ -130,7 +130,7 @@
     <div class="bg-yellow-500 text-black p-2 text-center text-sm sticky top-0 z-50">
         You are viewing the backup version of this site. For the full experience, please try the <a href="./index.html" class="underline font-bold">main site</a>.
     </div>
-    <div id="root"></div>
+    <div id="root" style="height: calc(100vh - 32px); display: flex; flex-direction: column;"></div>
     <script type="text/babel" data-presets="react,typescript" data-type="module">
 import { GoogleGenAI } from '@google/genai';
 import { Chess } from 'chess.js';
@@ -139,7 +139,7 @@ import ReactDOM from 'react-dom/client';
 
 const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-// --- BUNDLED APP CODE ---
+// --- START OF BUNDLED APP CODE ---
 
 // From: constants.ts
 const BUNGO_CHARACTERS = [
@@ -352,8 +352,8 @@ const useFavorites = ({ user, token }) => {
     }
   }, [remoteFavorites, user, token, isSaving]);
   const favorites = user ? remoteFavorites : localFavorites;
-  const setFavorites = user ? setRemoteFavorites : setLocalFavorites;
-  return { favorites, setFavorites: setFavorites, isLoading };
+  const setFavoritesCallback = user ? setRemoteFavorites : setLocalFavorites;
+  return { favorites, setFavorites: setFavoritesCallback, isLoading };
 };
 
 // From: Icon Components
@@ -364,60 +364,633 @@ const ImageIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-1
 const LoginIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor"> <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /> </svg> );
 const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"> <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /> </svg> );
 const SettingsIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}> <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> </svg> );
-const StarIcon = ({ filled, className = '' }) => ( <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${className}`} viewBox="0 0 20 20" fill={filled ? 'currentColor' : 'none'} stroke={filled ? 'none' : 'currentColor'} strokeWidth="1.5" > <path className={filled ? 'text-yellow-400' : 'text-white'} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /> </svg> );
+const StarIcon = ({ filled, className = '' }) => ( <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${className}`} viewBox="0 0 20 20" fill={filled ? 'currentColor' : 'none'} stroke={filled ? 'none' : 'currentColor'} strokeWidth="1.5"> <path className={filled ? 'text-yellow-400' : 'text-white'} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /> </svg> );
 const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor"> <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /> </svg> );
 const VideoIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-600 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}> <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /> </svg> );
 
-// From: components/chess/pieces.ts
-const PIECE_SVGS = { wK: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" stroke="#000" stroke-width="1.5" stroke-linejoin="round"><path d="M22.5 11.63V6M20 8h5" stroke-linecap="round"/><path d="M22.5 25s4.5-7.5 3-10.5c0 0-1.5-1.5-3 .5s-3-.5-3-.5c-1.5-2 0-2.5-3-1" fill-rule="evenodd"/><path d="M12.5 37c5.5-3 5.5-6.5 9-6.5s3.5 3.5 9 6.5" fill="none" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M12.5 37c5.5-3 5.5-6.5 9-6.5s3.5 3.5 9 6.5h-18zM11.5 37h22M11.5 34h22M11.5 31h22M11.5 28h22" stroke-linecap="round"/></g></svg>`, wQ: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 37c3.5-2 6.5-6 6.5-12.5s-4.5-4-4.5-4 1-4.5 5.5-4.5 5.5 4.5 5.5 4.5-3 10.5 0 12.5 2.5 2.5 6.5 2.5s4.5-1.5 4.5-1.5-1 4.5-4.5 4.5-6.5-2.5-6.5-2.5 1.5 2.5 0 2.5-6.5-1-6.5-2.5-3 1-3 1-3-2.5-4.5-4zM10.5 37c0 .5 0 1 1 1h22c1 0 1-.5 1-1zM11.5 24.5s-1.5-1.5 0-3 2-1.5 2-1.5-2.5-4-1-6.5c1.5-2.5 5-2 5-2s3.5-.5 5 2c1.5 2.5-1 6.5-1 6.5s2 0 2 1.5 0 3 0 3" fill-rule="evenodd"/><circle cx="6" cy="12" r="2.5"/><circle cx="14" cy="9" r="2.5"/><circle cx="22.5" cy="8" r="2.5"/><circle cx="31" cy="9" r="2.5"/><circle cx="39" cy="12" r="2.5"/></g></svg>`, wR: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12.5 32l1.5-2.5h17l1.5 2.5h-20zM12 36v-4h21v4H12z"/><path d="M14 29.5v-13h17v13H14z" stroke-linecap="butt"/><path d="M14 16.5L11 14h23l-3 2.5H14zM11 14V9h4v2h5V9h5v2h5V9h4v5H11z" stroke-linecap="butt"/><path d="M12 35.5h21M13 31.5h19M14.5 15.5h16M14.5 12.5h16M14.5 10.5h16" fill="none" stroke-width="1" stroke-linejoin="miter"/></g></svg>`, wB: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2z"/><path d="M15 32c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0 .5.5 0 2z"/><path d="M25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z"/><path d="M17.5 26h10M15 32h15M20 18.5s.5-1.5 2.5-1.5 2.5 1.5 2.5 1.5" fill="none"/></g></svg>`, wN: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10c10.5 1 16.5 8 16 29H8c-.5-21 5.5-28 14-29z"/><path d="M24 18c.38 2.91-5.55 7.37-8 9-3 2-2.82 4.34-5 4-1.042-.94 1.41-3.04 0-3-1 0 .19 1.23-1 2-1 0-4.003-1.49-4-4 .003-2.51 4-3 4-4s-1.87-4.14-1-6c.87-1.86 3.002-2.002 4-2 .998-.002 2 2.5 2 2.5s2.32-1.92 4-1.5c1.68.42 3 4 3 4z" fill="#fff"/><path d="M9.5 25.5a.5.5 0 1 1-1 0 .5.5 0 1 1 1 0z" stroke-linecap="butt"/><path d="M15 15.5c-1.5 1.5-2.5 3.5-2.5 3.5s-1-2.5-2.5-4c-1.5-1.5-2-2-1.5-3 .5-1 1.5-1 2-1 .5 0 1 .5 1 .5s.5-1 1-1c.5 0 1 .5 1.5 1 .5 1 0 1.5-1.5 3z" fill="#fff"/></g></svg>`, wP: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.31 18.2 15 23.23 15 29h15c0-5.77-2.31-10.8-4.28-13.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z"/></g></svg>`, bK: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" stroke="#000" stroke-width="1.5" stroke-linejoin="round"><path d="M22.5 11.63V6M20 8h5" stroke-linecap="round" fill="none"/><path d="M22.5 25s4.5-7.5 3-10.5c0 0-1.5-1.5-3 .5s-3-.5-3-.5c-1.5-2 0-2.5-3-1" fill-rule="evenodd"/><path d="M12.5 37c5.5-3 5.5-6.5 9-6.5s3.5 3.5 9 6.5" fill="none" stroke-linecap="butt" stroke-linejoin="miter"/><g stroke-linecap="round"><path d="M12.5 37c5.5-3 5.5-6.5 9-6.5s3.5 3.5 9 6.5h-18z"/><path d="M11.5 37h22M11.5 34h22M11.5 31h22M11.5 28h22"/></g></g></svg>`, bQ: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 37c3.5-2 6.5-6 6.5-12.5s-4.5-4-4.5-4 1-4.5 5.5-4.5 5.5 4.5 5.5 4.5-3 10.5 0 12.5 2.5 2.5 6.5 2.5s4.5-1.5 4.5-1.5-1 4.5-4.5 4.5-6.5-2.5-6.5-2.5 1.5 2.5 0 2.5-6.5-1-6.5-2.5-3 1-3 1-3-2.5-4.5-4zM10.5 37c0 .5 0 1 1 1h22c1 0 1-.5 1-1zM11.5 24.5s-1.5-1.5 0-3 2-1.5 2-1.5-2.5-4-1-6.5c1.5-2.5 5-2 5-2s3.5-.5 5 2c1.5 2.5-1 6.5-1 6.5s2 0 2 1.5 0 3 0 3" fill-rule="evenodd"/><g fill="#666"><circle cx="6" cy="12" r="2.5"/><circle cx="14" cy="9" r="2.5"/><circle cx="22.5" cy="8" r="2.5"/><circle cx="31" cy="9" r="2.5"/><circle cx="39" cy="12" r="2.5"/></g></g></svg>`, bR: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12.5 32l1.5-2.5h17l1.5 2.5h-20zM12 36v-4h21v4H12z"/><path d="M14 29.5v-13h17v13H14z" stroke-linecap="butt"/><path d="M14 16.5L11 14h23l-3 2.5H14zM11 14V9h4v2h5V9h5v2h5V9h4v5H11z" stroke-linecap="butt"/><g fill="none" stroke-width="1" stroke-linejoin="miter"><path d="M12 35.5h21M13 31.5h19M14.5 15.5h16M14.5 12.5h16M14.5 10.5h16"/></g></g></svg>`, bB: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2z"/><path d="M15 32c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0 .5.5 0 2z"/><path d="M25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z"/><path d="M17.5 26h10M15 32h15M20 18.5s.5-1.5 2.5-1.5 2.5 1.5 2.5 1.5" fill="none"/></g></svg>`, bN: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10c10.5 1 16.5 8 16 29H8c-.5-21 5.5-28 14-29z"/><path d="M24 18c.38 2.91-5.55 7.37-8 9-3 2-2.82 4.34-5 4-1.042-.94 1.41-3.04 0-3-1 0 .19 1.23-1 2-1 0-4.003-1.49-4-4 .003-2.51 4-3 4-4s-1.87-4.14-1-6c.87-1.86 3.002-2.002 4-2 .998-.002 2 2.5 2 2.5s2.32-1.92 4-1.5c1.68.42 3 4 3 4z" fill="#fff" stroke-miterlimit="10"/><path d="M9.5 25.5a.5.5 0 1 1-1 0 .5.5 0 1 1 1 0z" stroke-linecap="butt"/><path d="M15 15.5c-1.5 1.5-2.5 3.5-2.5 3.5s-1-2.5-2.5-4c-1.5-1.5-2-2-1.5-3 .5-1 1.5-1 2-1 .5 0 1 .5 1 .5s.5-1 1-1c.5 0 1 .5 1.5 1 .5 1 0 1.5-1.5 3z" fill="#fff"/></g></svg>`, bP: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.31 18.2 15 23.23 15 29h15c0-5.77-2.31-10.8-4.28-13.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z"/></g></svg>`, };
+// From: Chess Pieces
+const PIECE_SVGS = { wK: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" stroke="#000" stroke-width="1.5" stroke-linejoin="round"><path d="M22.5 11.63V6M20 8h5" stroke-linecap="round"/><path d="M22.5 25s4.5-7.5 3-10.5c0 0-1.5-1.5-3 .5s-3-.5-3-.5c-1.5-2 0-2.5-3-1" fill-rule="evenodd"/><path d="M12.5 37c5.5-3 5.5-6.5 9-6.5s3.5 3.5 9 6.5" fill="none" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M12.5 37c5.5-3 5.5-6.5 9-6.5s3.5 3.5 9 6.5h-18zM11.5 37h22M11.5 34h22M11.5 31h22M11.5 28h22" stroke-linecap="round"/></g></svg>`, wQ: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 37c3.5-2 6.5-6 6.5-12.5s-4.5-4-4.5-4 1-4.5 5.5-4.5 5.5 4.5 5.5 4.5-3 10.5 0 12.5 2.5 2.5 6.5 2.5s4.5-1.5 4.5-1.5-1 4.5-4.5 4.5-6.5-2.5-6.5-2.5 1.5 2.5 0 2.5-6.5-1-6.5-2.5-3 1-3 1-3-2.5-4.5-4zM10.5 37c0 .5 0 1 1 1h22c1 0 1-.5 1-1zM11.5 24.5s-1.5-1.5 0-3 2-1.5 2-1.5-2.5-4-1-6.5c1.5-2.5 5-2 5-2s3.5-.5 5 2c1.5 2.5-1 6.5-1 6.5s2 0 2 1.5 0 3 0 3" fill-rule="evenodd"/><circle cx="6" cy="12" r="2.5"/><circle cx="14" cy="9" r="2.5"/><circle cx="22.5" cy="8" r="2.5"/><circle cx="31" cy="9" r="2.5"/><circle cx="39" cy="12" r="2.5"/></g></svg>`, wR: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12.5 32l1.5-2.5h17l1.5 2.5h-20zM12 36v-4h21v4H12z"/><path d="M14 29.5v-13h17v13H14z" stroke-linecap="butt"/><path d="M14 16.5L11 14h23l-3 2.5H14zM11 14V9h4v2h5V9h5v2h5V9h4v5H11z" stroke-linecap="butt"/><path d="M12 35.5h21M13 31.5h19M14.5 15.5h16M14.5 12.5h16M14.5 10.5h16" fill="none" stroke-width="1" stroke-linejoin="miter"/></g></svg>`, wB: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2z"/><path d="M15 32c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0 .5.5 0 2z"/><path d="M25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z"/><path d="M17.5 26h10M15 32h15M20 18.5s.5-1.5 2.5-1.5 2.5 1.5 2.5 1.5" fill="none"/></g></svg>`, wN: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10c10.5 1 16.5 8 16 29H8c-.5-21 5.5-28 14-29z"/><path d="M24 18c.38 2.91-5.55 7.37-8 9-3 2-2.82 4.34-5 4-1.042-.94 1.41-3.04 0-3-1 0 .19 1.23-1 2-1 0-4.003-1.49-4-4 .003-2.51 4-3 4-4s-1.87-4.14-1-6c.87-1.86 3.002-2.002 4-2 .998-.002 2 2.5 2 2.5s2.32-1.92 4-1.5c1.68.42 3 4 3 4z" fill="#fff"/><path d="M9.5 25.5a.5.5 0 1 1-1 0 .5.5 0 1 1 1 0z" stroke-linecap="butt"/><path d="M15 15.5c-1.5 1.5-2.5 3.5-2.5 3.5s-1-2.5-2.5-4c-1.5-1.5-2-2-1.5-3 .5-1 1.5-1 2-1 .5 0 1 .5 1 .5s.5-1 1-1c.5 0 1 .5 1.5 1 .5 1 0 1.5-1.5 3z" fill="#fff"/></g></svg>`, wP: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.31 18.2 15 23.23 15 29h15c0-5.77-2.31-10.8-4.28-13.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z"/></g></svg>`, bK: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" stroke="#000" stroke-width="1.5" stroke-linejoin="round"><path d="M22.5 11.63V6M20 8h5" stroke-linecap="round" fill="none"/><path d="M22.5 25s4.5-7.5 3-10.5c0 0-1.5-1.5-3 .5s-3-.5-3-.5c-1.5-2 0-2.5-3-1" fill-rule="evenodd"/><path d="M12.5 37c5.5-3 5.5-6.5 9-6.5s3.5 3.5 9 6.5" fill="none" stroke-linecap="butt" stroke-linejoin="miter"/><g stroke-linecap="round"><path d="M12.5 37c5.5-3 5.5-6.5 9-6.5s3.5 3.5 9 6.5h-18z"/><path d="M11.5 37h22M11.5 34h22M11.5 31h22M11.5 28h22"/></g></g></svg>`, bQ: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 37c3.5-2 6.5-6 6.5-12.5s-4.5-4-4.5-4 1-4.5 5.5-4.5 5.5 4.5 5.5 4.5-3 10.5 0 12.5 2.5 2.5 6.5 2.5s4.5-1.5 4.5-1.5-1 4.5-4.5 4.5-6.5-2.5-6.5-2.5 1.5 2.5 0 2.5-6.5-1-6.5-2.5-3 1-3 1-3-2.5-4.5-4zM10.5 37c0 .5 0 1 1 1h22c1 0 1-.5 1-1zM11.5 24.5s-1.5-1.5 0-3 2-1.5 2-1.5-2.5-4-1-6.5c1.5-2.5 5-2 5-2s3.5-.5 5 2c1.5 2.5-1 6.5-1 6.5s2 0 2 1.5 0 3 0 3" fill-rule="evenodd"/><g fill="#666"><circle cx="6" cy="12" r="2.5"/><circle cx="14" cy="9" r="2.5"/><circle cx="22.5" cy="8" r="2.5"/><circle cx="31" cy="9" r="2.5"/><circle cx="39" cy="12" r="2.5"/></g></g></svg>`, bR: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12.5 32l1.5-2.5h17l1.5 2.5h-20zM12 36v-4h21v4H12z"/><path d="M14 29.5v-13h17v13H14z" stroke-linecap="butt"/><path d="M14 16.5L11 14h23l-3 2.5H14zM11 14V9h4v2h5V9h5v2h5V9h4v5H11z" stroke-linecap="butt"/><g fill="none" stroke-width="1" stroke-linejoin="miter"><path d="M12 35.5h21M13 31.5h19M14.5 15.5h16M14.5 12.5h16M14.5 10.5h16"/></g></g></svg>`, bB: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2z"/><path d="M15 32c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0 .5.5 0 2z"/><path d="M25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z"/><path d="M17.5 26h10M15 32h15M20 18.5s.5-1.5 2.5-1.5 2.5 1.5 2.5 1.5" fill="none"/></g></svg>`, bN: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10c10.5 1 16.5 8 16 29H8c-.5-21 5.5-28 14-29z"/><path d="M24 18c.38 2.91-5.55 7.37-8 9-3 2-2.82 4.34-5 4-1.042-.94 1.41-3.04 0-3-1 0 .19 1.23-1 2-1 0-4.003-1.49-4-4 .003-2.51 4-3 4-4s-1.87-4.14-1-6c.87-1.86 3.002-2.002 4-2 .998-.002 2 2.5 2 2.5s2.32-1.92 4-1.5c1.68.42 3 4 3 4z" fill="#fff" stroke-miterlimit="10"/><path d="M9.5 25.5a.5.5 0 1 1-1 0 .5.5 0 1 1 1 0z" stroke-linecap="butt"/><path d="M15 15.5c-1.5 1.5-2.5 3.5-2.5 3.5s-1-2.5-2.5-4c-1.5-1.5-2-2-1.5-3 .5-1 1.5-1 2-1 .5 0 1 .5 1 .5s.5-1 1-1c.5 0 1 .5 1.5 1 .5 1 0 1.5-1.5 3z" fill="#fff"/></g></svg>`, bP: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><g fill="#666" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.31 18.2 15 23.23 15 29h15c0-5.77-2.31-10.8-4.28-13.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z"/></g></svg>`,};
+const ChessPiece = ({ piece, color }) => {
+  const pieceKey = `${color}${piece.toUpperCase()}`;
+  const SvgComponent = PIECE_SVGS[pieceKey];
+  if (!SvgComponent) return null;
+  return React.createElement('div', { className: "w-full h-full", dangerouslySetInnerHTML: { __html: SvgComponent }, style: { filter: 'drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3))' } });
+};
 
-// From: components/chess/Piece.tsx
-const ChessPiece = ({ piece, color }) => { const pieceKey = `${color}${piece.toUpperCase()}`; const SvgComponent = PIECE_SVGS[pieceKey]; if (!SvgComponent) { return null; } return ( <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: SvgComponent }} style={{ filter: 'drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3))' }} /> ); };
+// --- START OF COMPONENT FILES ---
 
 // From: components/chess/Chessboard.tsx
-const Chessboard = ({ fen, onMove, playerColor, isAiThinking }) => { const [selectedSquare, setSelectedSquare] = useState(null); const game = useMemo(() => new Chess(fen), [fen]); const board = useMemo(() => game.board(), [game]); const validMoves = useMemo(() => { if (!selectedSquare) return []; return game.moves({ square: selectedSquare, verbose: true }).map(move => move.to); }, [selectedSquare, game]); const handleSquareClick = (square) => { if (isAiThinking) return; if (selectedSquare) { if (square === selectedSquare) { setSelectedSquare(null); return; } const isMoveValid = validMoves.includes(square); if (isMoveValid) { onMove(selectedSquare, square); setSelectedSquare(null); } else { const piece = game.get(square); if (piece && piece.color === playerColor) { setSelectedSquare(square); } else { setSelectedSquare(null); } } } else { const piece = game.get(square); if (piece && piece.color === playerColor) { setSelectedSquare(square); } } }; const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']; const ranks = ['1', '2', '3', '4', '5', '6', '7', '8']; const displayRanks = playerColor === 'w' ? [...ranks].reverse() : ranks; const displayFiles = playerColor === 'w' ? files : [...files].reverse(); const getPieceAt = (rank, file) => { const square = `${file}${rank}`; return game.get(square); } return ( <div className="aspect-square w-full max-w-[calc(100vh-6rem)] shadow-2xl relative"> {isAiThinking && ( <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-20"> <div className="w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin"></div> </div> )} {displayRanks.map((rank, i) => ( <div key={rank} className="flex"> {displayFiles.map((file, j) => { const square = `${file}${rank}`; const isLight = (i + j) % 2 !== 0; const isSelected = selectedSquare === square; const isPossibleMove = validMoves.includes(square); const piece = getPieceAt(rank, file); return ( <div key={square} onClick={() => handleSquareClick(square)} className={`w-[12.5%] aspect-square flex items-center justify-center relative ${isLight ? 'bg-[var(--chess-light-square)]' : 'bg-[var(--chess-dark-square)]'}`} > {isSelected && <div className="absolute inset-0 bg-yellow-500/50"></div>} <div className="w-full h-full cursor-pointer"> {piece && <ChessPiece piece={piece.type} color={piece.color} />} </div> {isPossibleMove && ( <div className="absolute w-1/3 h-1/3 bg-black/30 rounded-full"></div> )} </div> ); })} </div> ))} </div> ); };
+const Chessboard = ({ fen, onMove, playerColor, isAiThinking }) => {
+  const [selectedSquare, setSelectedSquare] = useState(null);
+  const game = useMemo(() => new Chess(fen), [fen]);
+  const board = useMemo(() => game.board(), [game]);
+  const validMoves = useMemo(() => {
+    if (!selectedSquare) return [];
+    return game.moves({ square: selectedSquare, verbose: true }).map(move => move.to);
+  }, [selectedSquare, game]);
+
+  const handleSquareClick = (square) => {
+    if (isAiThinking) return;
+    if (selectedSquare) {
+      if (square === selectedSquare) { setSelectedSquare(null); return; }
+      if (validMoves.includes(square)) {
+        onMove(selectedSquare, square);
+        setSelectedSquare(null);
+      } else {
+        const piece = game.get(square);
+        if (piece && piece.color === playerColor) { setSelectedSquare(square); } 
+        else { setSelectedSquare(null); }
+      }
+    } else {
+      const piece = game.get(square);
+      if (piece && piece.color === playerColor) { setSelectedSquare(square); }
+    }
+  };
+
+  const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+  const ranks = ['1', '2', '3', '4', '5', '6', '7', '8'];
+  const displayRanks = playerColor === 'w' ? [...ranks].reverse() : ranks;
+  const displayFiles = playerColor === 'w' ? files : [...files].reverse();
+  const getPieceAt = (rank, file) => game.get(`${file}${rank}`);
+
+  return (
+    React.createElement('div', { className: "aspect-square w-full max-w-[calc(100vh-6rem)] shadow-2xl relative" },
+      isAiThinking && React.createElement('div', { className: "absolute inset-0 bg-black/50 flex items-center justify-center z-20" },
+        React.createElement('div', { className: "w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin" })
+      ),
+      displayRanks.map((rank, i) =>
+        React.createElement('div', { key: rank, className: "flex" },
+          displayFiles.map((file, j) => {
+            const square = `${file}${rank}`;
+            const isLight = (i + j) % 2 !== 0;
+            return React.createElement('div', { key: square, onClick: () => handleSquareClick(square), className: `w-[12.5%] aspect-square flex items-center justify-center relative ${isLight ? 'bg-[var(--chess-light-square)]' : 'bg-[var(--chess-dark-square)]'}` },
+              selectedSquare === square && React.createElement('div', { className: "absolute inset-0 bg-yellow-500/50" }),
+              React.createElement('div', { className: "w-full h-full cursor-pointer" }, getPieceAt(rank, file) && React.createElement(ChessPiece, { piece: getPieceAt(rank, file).type, color: getPieceAt(rank, file).color })),
+              validMoves.includes(square) && React.createElement('div', { className: "absolute w-1/3 h-1/3 bg-black/30 rounded-full" })
+            );
+          })
+        )
+      )
+    )
+  );
+};
+
 
 // From: components/ChessMode.tsx
-const ChessMode = () => { const [game, setGame] = useState(new Chess()); const [fen, setFen] = useState(game.fen()); const [elo, setElo] = useState(800); const [history, setHistory] = useState([]); const [playerColor, setPlayerColor] = useState('w'); const [isAiThinking, setIsAiThinking] = useState(false); const [status, setStatus] = useState("White's turn to move."); const [showNewGameDialog, setShowNewGameDialog] = useState(true); const updateStatus = useCallback((currentGame) => { let newStatus = ''; const turn = currentGame.turn() === 'w' ? 'White' : 'Black'; if (currentGame.isCheckmate()) { newStatus = `Checkmate! ${turn === 'White' ? 'Black' : 'White'} wins.`; } else if (currentGame.isDraw()) { newStatus = 'Draw!'; } else if (currentGame.isStalemate()) { newStatus = 'Stalemate!'; } else if (currentGame.isThreefoldRepetition()) { newStatus = 'Draw by threefold repetition!'; } else { newStatus = `${turn}'s turn to move.`; if (currentGame.isCheck()) { newStatus += ' (in check)'; } } setStatus(newStatus); }, []); const getAiMove = useCallback(async () => { setIsAiThinking(true); const gameCopy = new Chess(game.fen()); const pgn = gameCopy.pgn(); const currentFen = gameCopy.fen(); const prompt = `You are a chess engine. Your ELO rating is ${elo}. The current board state in FEN is: ${currentFen} The game history in PGN is: ${pgn} It is your turn to move. Your color is ${gameCopy.turn() === 'w' ? 'white' : 'black'}. Analyze the position and provide a good move quickly in Standard Algebraic Notation (SAN). Respond with ONLY the move in SAN format (e.g., "e4", "Nf3", "O-O"). Do not add any explanation or commentary.`; try { const ai = new GoogleGenAI({ apiKey: process.env.API_KEY }); let validMoveFound = false; for (let i = 0; i < 3; i++) { const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt, config: { temperature: 0, thinkingConfig: { thinkingBudget: 0 } } }); const move = response.text.trim(); try { const result = gameCopy.move(move); if (result) { validMoveFound = true; break; } } catch (e) { console.warn(`AI suggested invalid move: ${move}. Retrying...`); } } if (validMoveFound) { setGame(gameCopy); setFen(gameCopy.fen()); setHistory(gameCopy.history({ verbose: true })); updateStatus(gameCopy); } else { setStatus("AI failed to provide a valid move. You can continue playing."); } } catch (error) { console.error("Error getting AI move:", error); setStatus("Error fetching AI move. Please try again."); } finally { setIsAiThinking(false); } }, [elo, game, updateStatus]); useEffect(() => { const isAiTurn = !showNewGameDialog && game.turn() !== playerColor && !game.isGameOver(); if (isAiTurn) { getAiMove(); } }, [game, playerColor, showNewGameDialog, getAiMove]); const handleMove = (from, to) => { if (game.turn() !== playerColor || isAiThinking) return; const newGame = new Chess(game.fen()); try { const move = newGame.move({ from, to, promotion: 'q' }); if (move) { setGame(newGame); setFen(newGame.fen()); setHistory(newGame.history({ verbose: true })); updateStatus(newGame); } } catch (e) {} }; const startNewGame = (color) => { const newGame = new Chess(); setGame(newGame); setFen(newGame.fen()); setHistory([]); setPlayerColor(color); updateStatus(newGame); setShowNewGameDialog(false); }; const NewGameDialog = () => ( <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-10"> <div className="bg-[var(--background-secondary)] p-8 rounded-lg shadow-xl text-center"> <h2 className="text-2xl font-bold mb-4">Start a New Game</h2> <p className="text-[var(--text-secondary)] mb-6">Choose your side to begin.</p> <div className="flex justify-center gap-4"> <button onClick={() => startNewGame('w')} className="px-8 py-3 bg-[var(--button-secondary-background)] text-[var(--button-secondary-text)] font-bold rounded hover:bg-[var(--button-secondary-hover)] transition-colors">Play as White</button> <button onClick={() => startNewGame('b')} className="px-8 py-3 bg-[var(--background-primary)] text-[var(--text-primary)] font-bold rounded border border-[var(--border-secondary)] hover:bg-black transition-colors">Play as Black</button> </div> </div> </div> ); return ( <div className="flex flex-col md:flex-row h-full bg-[var(--background-secondary)] text-[var(--text-primary)] p-4 gap-4"> {showNewGameDialog && <NewGameDialog />} <div className="flex-1 flex items-center justify-center relative"> <Chessboard fen={fen} onMove={handleMove} playerColor={playerColor} isAiThinking={isAiThinking} /> </div> <div className="w-full md:w-80 bg-[var(--background-primary)] p-4 rounded-lg flex flex-col"> <h2 className="text-2xl font-bold mb-4 text-center border-b border-[var(--border-primary)] pb-3"><span className="text-[var(--accent-text)]">Stellar</span>Chess</h2> <div className="mb-4"> <label htmlFor="elo-slider" className="block mb-2 font-semibold text-[var(--text-primary)]">AI Strength (ELO: {elo})</label> <input id="elo-slider" type="range" min="100" max="1500" step="100" value={elo} onChange={(e) => setElo(parseInt(e.target.value, 10))} className="w-full h-2 bg-[var(--background-tertiary)] rounded-lg appearance-none cursor-pointer" /> </div> <div className="bg-[var(--background-secondary)] p-3 rounded-md mb-4 text-center"> <p className="font-semibold text-lg">{status}</p> </div> <div className="flex-1 bg-[var(--background-secondary)] rounded-md p-2 overflow-y-auto"> <ol className="list-decimal list-inside text-[var(--text-primary)]"> {history.map((move, i) => ( i % 2 === 0 && ( <li key={i} className="px-2 py-1 flex"> <span className="w-6 mr-2 font-bold">{i / 2 + 1}.</span> <span className="w-16">{history[i]?.san}</span> {history[i+1] && <span className="w-16">{history[i+1]?.san}</span>} </li> ) ))} </ol> </div> <button onClick={() => setShowNewGameDialog(true)} className="mt-4 w-full px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors" > New Game </button> </div> </div> ); };
+const ChessMode = () => {
+  const [game, setGame] = useState(new Chess());
+  const [fen, setFen] = useState(game.fen());
+  const [elo, setElo] = useState(800);
+  const [history, setHistory] = useState([]);
+  const [playerColor, setPlayerColor] = useState('w');
+  const [isAiThinking, setIsAiThinking] = useState(false);
+  const [status, setStatus] = useState("White's turn to move.");
+  const [showNewGameDialog, setShowNewGameDialog] = useState(true);
+
+  const updateStatus = useCallback((currentGame) => {
+    let newStatus = '';
+    const turn = currentGame.turn() === 'w' ? 'White' : 'Black';
+    if (currentGame.isCheckmate()) { newStatus = `Checkmate! ${turn === 'White' ? 'Black' : 'White'} wins.`; }
+    else if (currentGame.isDraw()) { newStatus = 'Draw!'; }
+    else if (currentGame.isStalemate()) { newStatus = 'Stalemate!'; }
+    else if (currentGame.isThreefoldRepetition()) { newStatus = 'Draw by threefold repetition!'; }
+    else { newStatus = `${turn}'s turn to move.`; if (currentGame.isCheck()) { newStatus += ' (in check)'; } }
+    setStatus(newStatus);
+  }, []);
+
+  const getAiMove = useCallback(async () => {
+    setIsAiThinking(true);
+    const gameCopy = new Chess(game.fen());
+    const prompt = `You are a chess engine. Your ELO rating is ${elo}. The current board state in FEN is: ${gameCopy.fen()} The game history in PGN is: ${gameCopy.pgn()} It is your turn to move. Your color is ${gameCopy.turn() === 'w' ? 'white' : 'black'}. Analyze the position and provide a good move quickly in Standard Algebraic Notation (SAN). Respond with ONLY the move in SAN format (e.g., "e4", "Nf3", "O-O"). Do not add any explanation or commentary.`;
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      let validMoveFound = false;
+      for (let i = 0; i < 3; i++) {
+        const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt, config: { temperature: 0, thinkingConfig: { thinkingBudget: 0 } } });
+        try { if (gameCopy.move(response.text.trim())) { validMoveFound = true; break; } } catch (e) { console.warn(`AI suggested invalid move: ${response.text.trim()}. Retrying...`); }
+      }
+      if (validMoveFound) { setGame(gameCopy); setFen(gameCopy.fen()); setHistory(gameCopy.history({ verbose: true })); updateStatus(gameCopy); }
+      else { setStatus("AI failed to provide a valid move. You can continue playing."); }
+    } catch (error) { console.error("Error getting AI move:", error); setStatus("Error fetching AI move. Please try again."); }
+    finally { setIsAiThinking(false); }
+  }, [elo, game, updateStatus]);
+
+  useEffect(() => {
+    if (!showNewGameDialog && game.turn() !== playerColor && !game.isGameOver()) { getAiMove(); }
+  }, [game, playerColor, showNewGameDialog, getAiMove]);
+
+  const handleMove = (from, to) => {
+    if (game.turn() !== playerColor || isAiThinking) return;
+    const newGame = new Chess(game.fen());
+    try { if (newGame.move({ from, to, promotion: 'q' })) { setGame(newGame); setFen(newGame.fen()); setHistory(newGame.history({ verbose: true })); updateStatus(newGame); } } catch (e) {}
+  };
+
+  const startNewGame = (color) => {
+    const newGame = new Chess();
+    setGame(newGame); setFen(newGame.fen()); setHistory([]); setPlayerColor(color); updateStatus(newGame); setShowNewGameDialog(false);
+  };
+  
+  const NewGameDialog = () => (
+    React.createElement('div', { className: "absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-10" },
+      React.createElement('div', { className: "bg-[var(--background-secondary)] p-8 rounded-lg shadow-xl text-center" },
+        React.createElement('h2', { className: "text-2xl font-bold mb-4" }, "Start a New Game"),
+        React.createElement('p', { className: "text-[var(--text-secondary)] mb-6" }, "Choose your side to begin."),
+        React.createElement('div', { className: "flex justify-center gap-4" },
+          React.createElement('button', { onClick: () => startNewGame('w'), className: "px-8 py-3 bg-[var(--button-secondary-background)] text-[var(--button-secondary-text)] font-bold rounded hover:bg-[var(--button-secondary-hover)] transition-colors" }, "Play as White"),
+          React.createElement('button', { onClick: () => startNewGame('b'), className: "px-8 py-3 bg-[var(--background-primary)] text-[var(--text-primary)] font-bold rounded border border-[var(--border-secondary)] hover:bg-black transition-colors" }, "Play as Black")
+        )
+      )
+    )
+  );
+
+  return (
+    React.createElement('div', { className: "flex flex-col md:flex-row h-full bg-[var(--background-secondary)] text-[var(--text-primary)] p-4 gap-4" },
+      showNewGameDialog && React.createElement(NewGameDialog),
+      React.createElement('div', { className: "flex-1 flex items-center justify-center relative" }, React.createElement(Chessboard, { fen, onMove: handleMove, playerColor, isAiThinking })),
+      React.createElement('div', { className: "w-full md:w-80 bg-[var(--background-primary)] p-4 rounded-lg flex flex-col" },
+        React.createElement('h2', { className: "text-2xl font-bold mb-4 text-center border-b border-[var(--border-primary)] pb-3" }, React.createElement('span', { className: "text-[var(--accent-text)]" }, "Stellar"), "Chess"),
+        React.createElement('div', { className: "mb-4" },
+          React.createElement('label', { htmlFor: "elo-slider", className: "block mb-2 font-semibold text-[var(--text-primary)]" }, `AI Strength (ELO: ${elo})`),
+          React.createElement('input', { id: "elo-slider", type: "range", min: "100", max: "1500", step: "100", value: elo, onChange: (e) => setElo(parseInt(e.target.value, 10)), className: "w-full h-2 bg-[var(--background-tertiary)] rounded-lg appearance-none cursor-pointer" })
+        ),
+        React.createElement('div', { className: "bg-[var(--background-secondary)] p-3 rounded-md mb-4 text-center" }, React.createElement('p', { className: "font-semibold text-lg" }, status)),
+        React.createElement('div', { className: "flex-1 bg-[var(--background-secondary)] rounded-md p-2 overflow-y-auto" },
+          React.createElement('ol', { className: "list-decimal list-inside text-[var(--text-primary)]" },
+            history.map((move, i) => i % 2 === 0 && React.createElement('li', { key: i, className: "px-2 py-1 flex" },
+              React.createElement('span', { className: "w-6 mr-2 font-bold" }, i / 2 + 1, "."),
+              React.createElement('span', { className: "w-16" }, history[i]?.san),
+              history[i + 1] && React.createElement('span', { className: "w-16" }, history[i + 1]?.san)
+            ))
+          )
+        ),
+        React.createElement('button', { onClick: () => setShowNewGameDialog(true), className: "mt-4 w-full px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors" }, "New Game")
+      )
+    )
+  );
+};
 
 // From: components/LoginModal.tsx
-const LoginModal = ({ onClose, onSuccess }) => { const [isLoading, setIsLoading] = useState(false); const [error, setError] = useState(null); const handleLogin = async () => { setIsLoading(true); setError(null); try { const { user, token } = await login(); onSuccess(user, token); } catch (err) { setError('Login failed. Please try again.'); console.error(err); } finally { setIsLoading(false); } }; return ( <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose} > <div className="bg-[var(--background-secondary)] rounded-xl shadow-2xl p-8 w-full max-w-md m-4 text-center border border-[var(--border-primary)]" onClick={(e) => e.stopPropagation()} > <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Login to Sync Favorites</h2> <p className="text-[var(--text-secondary)] mb-6"> Log in with your GitHub account (simulated) to save and sync your favorite characters across devices. </p> {error && <p className="text-[var(--danger-text)] text-sm mb-4">{error}</p>} <button onClick={handleLogin} disabled={isLoading} className="w-full flex items-center justify-center space-x-3 px-4 py-3 bg-[var(--background-primary)] hover:bg-black rounded-lg text-[var(--text-primary)] font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed" > {isLoading ? ( <div className="w-5 h-5 border-2 border-t-transparent border-[var(--text-primary)] rounded-full animate-spin"></div> ) : ( <> <GitHubIcon /> <span>Login with GitHub</span> </> )} </button> <button onClick={onClose} className="mt-4 text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-sm" > Maybe later </button> </div> </div> ); };
+const LoginModal = ({ onClose, onSuccess }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const handleLogin = async () => {
+    setIsLoading(true); setError(null);
+    try { const { user, token } = await login(); onSuccess(user, token); } 
+    catch (err) { setError('Login failed. Please try again.'); console.error(err); } 
+    finally { setIsLoading(false); }
+  };
+  return (
+    React.createElement('div', { className: "fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50", onClick: onClose },
+      React.createElement('div', { className: "bg-[var(--background-secondary)] rounded-xl shadow-2xl p-8 w-full max-w-md m-4 text-center border border-[var(--border-primary)]", onClick: (e) => e.stopPropagation() },
+        React.createElement('h2', { className: "text-2xl font-bold text-[var(--text-primary)] mb-2" }, "Login to Sync Favorites"),
+        React.createElement('p', { className: "text-[var(--text-secondary)] mb-6" }, "Log in with your GitHub account (simulated) to save and sync your favorite characters across devices."),
+        error && React.createElement('p', { className: "text-[var(--danger-text)] text-sm mb-4" }, error),
+        React.createElement('button', { onClick: handleLogin, disabled: isLoading, className: "w-full flex items-center justify-center space-x-3 px-4 py-3 bg-[var(--background-primary)] hover:bg-black rounded-lg text-[var(--text-primary)] font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed" },
+          isLoading ? React.createElement('div', { className: "w-5 h-5 border-2 border-t-transparent border-[var(--text-primary)] rounded-full animate-spin" }) : React.createElement(React.Fragment, null, React.createElement(GitHubIcon), React.createElement('span', null, "Login with GitHub"))
+        ),
+        React.createElement('button', { onClick: onClose, className: "mt-4 text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-sm" }, "Maybe later")
+      )
+    )
+  );
+};
 
 // From: components/Header.tsx
-const Header = ({ user, onLogin, onLogout, onOpenSettings }) => { const [dropdownOpen, setDropdownOpen] = useState(false); const dropdownRef = useRef(null); useEffect(() => { const handleClickOutside = (event) => { if (dropdownRef.current && !dropdownRef.current.contains(event.target)) { setDropdownOpen(false); } }; document.addEventListener('mousedown', handleClickOutside); return () => document.removeEventListener('mousedown', handleClickOutside); }, []); return ( <header className="bg-[var(--background-primary)]/80 backdrop-blur-sm shadow-lg p-3 sm:p-4 flex justify-between items-center z-20 flex-shrink-0 border-b border-[var(--border-primary)]"> <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] tracking-wider"> <span className="text-[var(--accent-text)]">Stellar</span>Ai </h1> <div className="flex items-center space-x-2 sm:space-x-4"> <button onClick={onOpenSettings} className="p-2 rounded-full hover:bg-[var(--background-interactive-hover)] transition-colors" aria-label="Open Settings" > <SettingsIcon /> </button> <div className="h-8 border-l border-[var(--border-secondary)]"></div> <div className="relative"> {user ? ( <div className="flex items-center"> <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center space-x-2"> <div className="w-8 h-8 rounded-full bg-[var(--accent-primary)] flex items-center justify-center"> <LoginIcon /> </div> <span className="text-[var(--text-primary)] font-semibold hidden sm:inline">{user.email}</span> </button> {dropdownOpen && ( <div ref={dropdownRef} className="absolute top-12 right-0 bg-[var(--background-secondary)] rounded-md shadow-lg w-48 py-1 border border-[var(--border-primary)]"> <button onClick={onLogout} className="flex items-center w-full text-left px-4 py-2 text-sm text-[var(--danger-text)] hover:bg-[var(--background-interactive-hover)]"> Logout </button> </div> )} </div> ) : ( <button onClick={onLogin} className="flex items-center space-x-2 px-3 py-2 bg-[var(--background-secondary)] hover:bg-[var(--background-interactive-hover)] rounded-md transition-colors" > <LoginIcon /> <span className="text-[var(--text-primary)] font-semibold">Login</span> </button> )} </div> </div> </header> ); };
-
-// From: components/ChatWindow.tsx
-const ChatWindow = ({ chatId, chatTitle, systemPrompt, initialGreeting, placeholderText = 'Type your message...', enableSearch, character, onBack, isNsfw, performanceMode = 'standard', }) => { const [messages, setMessages] = useLocalStorage(`chatHistory-${chatId}`, []); const [userInput, setUserInput] = useState(''); const [isLoading, setIsLoading] = useState(false); const [error, setError] = useState(null); const [chatSession, setChatSession] = useState(null); const messagesEndRef = useRef(null); useEffect(() => { const initChat = () => { try { const ai = new GoogleGenAI({ apiKey: process.env.API_KEY }); const config = { systemInstruction: systemPrompt, }; let budget; if (enableSearch) { config.tools = [{googleSearch: {}}]; budget = 8192; } switch (performanceMode) { case 'deep': budget = 16384; break; case 'quick': budget = 2048; break; case 'extreme': budget = 0; break; case 'standard': break; } if (budget !== undefined) { config.thinkingConfig = { thinkingBudget: budget }; } const history = messages .filter(msg => msg.content) .map(msg => ({ role: msg.role, parts: [{ text: msg.content }], })); const newChat = ai.chats.create({ model: 'gemini-2.5-flash', config: config, history: history, }); setChatSession(newChat); if (messages.length === 0) { setMessages([{ role: 'model', content: initialGreeting }]); } } catch (e) { console.error("Failed to initialize Gemini:", e); setError("Failed to initialize AI session. Please check your API key."); } }; initChat(); }, [systemPrompt, initialGreeting, enableSearch, chatId, performanceMode]); const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }; useEffect(scrollToBottom, [messages]); const handleSendMessage = useCallback(async () => { if (!userInput.trim() || isLoading || !chatSession) return; const userMessage = { role: 'user', content: userInput }; setMessages((prev) => [...prev, userMessage]); setUserInput(''); setIsLoading(true); setError(null); try { const stream = await chatSession.sendMessageStream({ message: userInput }); let text = ''; let groundingChunks = []; setMessages((prev) => [...prev, { role: 'model', content: '' }]); for await (const chunk of stream) { text += chunk.text; if (chunk.candidates?.[0]?.groundingMetadata?.groundingChunks) { groundingChunks = [...chunk.candidates[0].groundingMetadata.groundingChunks]; } setMessages((prev) => { const lastMessage = prev[prev.length - 1]; const updatedLastMessage = { ...lastMessage, content: text, groundingChunks }; return [...prev.slice(0, -1), updatedLastMessage]; }); } } catch (e) { console.error("Gemini API Error:", e); setError("An error occurred while getting a response. Please try again."); setMessages((prev) => [...prev, { role: 'model', content: "I'm sorry, I encountered an error." }]); } finally { setIsLoading(false); } }, [userInput, isLoading, chatSession, setMessages]); const handleKeyPress = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }; return ( <div className="flex flex-col h-full bg-[var(--background-secondary)]"> <div className="flex items-center p-3 border-b border-[var(--border-primary)] bg-[var(--background-primary)] flex-shrink-0"> {onBack && ( <button onClick={onBack} className="p-2 mr-2 -ml-2 rounded-full hover:bg-[var(--background-interactive-hover)] transition-colors" aria-label="Back to character selection" > <BackIcon /> </button> )} {character && ( <img src={character.image} alt={character.name} className="w-10 h-10 rounded-full mr-3 object-cover" /> )} <h2 className="text-xl font-semibold text-[var(--text-primary)] truncate">{character ? character.name : chatTitle}</h2> </div> <div className="flex-grow p-4 overflow-y-auto"> <div className="space-y-4"> {messages.map((msg, index) => ( <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : ''}`}> {msg.role === 'model' && ( <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--background-tertiary)] flex items-center justify-center"> {character ? <img src={character.image} alt={character.name} className="w-full h-full rounded-full object-cover" /> : <BotIcon />} </div> )} <div className={`p-3 rounded-2xl max-w-md md:max-w-lg ${msg.role === 'user' ? 'bg-[var(--accent-primary)] text-white rounded-br-none' : 'bg-[var(--background-tertiary)] text-[var(--text-primary)] rounded-bl-none'}`}> <p className="whitespace-pre-wrap">{msg.content}</p> {msg.groundingChunks && msg.groundingChunks.length > 0 && ( <div className="mt-3 pt-2 border-t border-[var(--border-secondary)]"> <h4 className="text-xs font-semibold text-[var(--text-secondary)] mb-2">Sources:</h4> <div className="flex flex-wrap gap-2"> {msg.groundingChunks.map((chunk, i) => ( chunk.web?.uri && ( <a href={chunk.web.uri} key={i} target="_blank" rel="noopener noreferrer" className="text-xs bg-[var(--background-hover)] hover:bg-[var(--background-interactive-hover)] text-[var(--accent-text)] px-2 py-1 rounded-full transition-colors truncate"> {chunk.web.title || new URL(chunk.web.uri).hostname} </a> ) ))} </div> </div> )} </div> {msg.role === 'user' && <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--accent-primary)] flex items-center justify-center"><UserIcon /></div>} </div> ))} <div ref={messagesEndRef} /> </div> </div> <div className="p-4 bg-[var(--background-primary)]/80 backdrop-blur-sm border-t border-[var(--border-primary)] flex-shrink-0"> {error && <p className="text-[var(--danger-text)] text-sm text-center mb-2">{error}</p>} <div className="flex items-center bg-[var(--background-tertiary)] rounded-lg"> <input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={handleKeyPress} placeholder={isLoading ? 'Waiting for response...' : placeholderText} disabled={isLoading} className="w-full bg-transparent p-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none" /> <button onClick={handleSendMessage} disabled={isLoading || !userInput.trim()} className="p-3 text-white rounded-r-lg disabled:text-[var(--text-muted)] disabled:cursor-not-allowed hover:bg-[var(--accent-primary)] transition-colors" > {isLoading ? ( <div className="w-5 h-5 border-2 border-t-transparent border-[var(--text-primary)] rounded-full animate-spin"></div> ) : ( <SendIcon /> )} </button> </div> </div> </div> ); };
-
-// From: components/ImageGenerator.tsx
-const ImageGenerator = () => { const aspectRatios = ["1:1", "16:9", "9:16", "4:3", "3:4"]; const [prompt, setPrompt] = useState(''); const [aspectRatio, setAspectRatio] = useState('1:1'); const [isLoading, setIsLoading] = useState(false); const [error, setError] = useState(null); const [imageUrl, setImageUrl] = useState(null); const handleGenerate = async () => { if (!prompt.trim()) { setError('Please enter a prompt to generate an image.'); return; } setIsLoading(true); setError(null); setImageUrl(null); try { const ai = new GoogleGenAI({ apiKey: process.env.API_KEY }); const response = await ai.models.generateImages({ model: 'imagen-4.0-generate-001', prompt: prompt, config: { numberOfImages: 1, outputMimeType: 'image/jpeg', aspectRatio: aspectRatio, }, }); const base64ImageBytes = response.generatedImages[0].image.imageBytes; const generatedImageUrl = `data:image/jpeg;base64,${base64ImageBytes}`; setImageUrl(generatedImageUrl); } catch (e) { console.error("Image generation error:", e); setError("Failed to generate image. The model may have refused the prompt. Please try again with a different prompt."); } finally { setIsLoading(false); } }; const handleKeyPress = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); } }; return ( <div className="flex flex-col h-full bg-[var(--background-secondary)] text-[var(--text-primary)]"> <div className="p-4 sm:p-8 bg-gradient-to-b from-[var(--background-primary)] to-[var(--background-secondary)]/80 text-center"> <h2 className="text-3xl font-bold text-[var(--text-primary)]">Image Generation</h2> <p className="text-[var(--text-secondary)] mt-2">Create stunning visuals with the power of AI.</p> </div> <div className="flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center"> <div className="w-full max-w-4xl"> <div className="bg-[var(--background-primary)]/80 backdrop-blur-sm p-4 rounded-lg shadow-lg"> <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyPress={handleKeyPress} placeholder="Describe the image you want to create... (e.g., A robot holding a red skateboard)" disabled={isLoading} className="w-full h-24 bg-[var(--background-tertiary)] border border-[var(--border-secondary)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-border)] transition-shadow resize-none" aria-label="Image generation prompt" /> <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4"> <div className="flex items-center space-x-2"> <span className="font-semibold text-[var(--text-primary)]">Aspect Ratio:</span> <div className="flex space-x-1 bg-[var(--background-tertiary)] p-1 rounded-md"> {aspectRatios.map((ratio) => ( <button key={ratio} onClick={() => setAspectRatio(ratio)} className={`px-3 py-1 text-sm font-medium rounded ${ aspectRatio === ratio ? 'bg-[var(--accent-primary)] text-white' : 'hover:bg-[var(--background-hover)] text-[var(--text-primary)]' } transition-colors`} > {ratio} </button> ))} </div> </div> <button onClick={handleGenerate} disabled={isLoading || !prompt.trim()} className="w-full sm:w-auto flex items-center justify-center px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" > {isLoading ? ( <> <div className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin mr-2"></div> <span>Generating...</span> </> ) : ( <span>Generate Image</span> )} </button> </div> {error && <p className="text-[var(--danger-text)] text-sm text-center mt-3">{error}</p>} </div> <div className="mt-8 flex-1 flex items-center justify-center bg-[var(--background-primary)] rounded-lg p-4 min-h-[40vh] border border-[var(--border-primary)]"> {isLoading && ( <div className="text-center text-[var(--text-secondary)]"> <div className="w-10 h-10 border-4 border-t-transparent border-[var(--accent-border)] rounded-full animate-spin mx-auto mb-4"></div> <p>Creating your vision... this may take a moment.</p> </div> )} {!isLoading && imageUrl && ( <img src={imageUrl} alt={prompt} className="max-w-full max-h-[70vh] object-contain rounded-md shadow-2xl" /> )} {!isLoading && !imageUrl && ( <div className="text-center text-[var(--text-muted)]"> <ImageIcon /> <p className="mt-4">Your generated image will appear here.</p> </div> )} </div> </div> </div> </div> ); };
-
-// From: components/VideoGenerator.tsx
-const VideoGenerator = () => { const aspectRatios = ["16:9", "9:16"]; const resolutions = ["720p", "1080p"]; const loadingMessages = [ "Warming up the video director AI...", "Storyboarding your concept...", "Setting up the virtual cameras...", "Rendering the first few frames...", "Applying visual effects...", "This is taking a bit longer than usual, but we're getting there...", "Compositing scenes together...", "Adding the final touches...", "Almost ready to roll!", ]; const [prompt, setPrompt] = useState(''); const [aspectRatio, setAspectRatio] = useState('16:9'); const [resolution, setResolution] = useState('720p'); const [isLoading, setIsLoading] = useState(false); const [loadingMessage, setLoadingMessage] = useState(''); const [error, setError] = useState(null); const [videoUrl, setVideoUrl] = useState(null); const [hasApiKey, setHasApiKey] = useState(false); const [isStudioEnv, setIsStudioEnv] = useState(false); const messageIntervalRef = useRef(null); useEffect(() => { const checkEnvironment = async () => { if (window.aistudio && typeof window.aistudio.hasSelectedApiKey === 'function') { setIsStudioEnv(true); const hasKey = await window.aistudio.hasSelectedApiKey(); setHasApiKey(hasKey); } else { setIsStudioEnv(false); console.warn("AI Studio environment not detected. Video generation will be disabled."); } }; checkEnvironment(); }, []); useEffect(() => { return () => { if (videoUrl) { URL.revokeObjectURL(videoUrl); } }; }, [videoUrl]); useEffect(() => { if (isLoading) { let messageIndex = 0; setLoadingMessage(loadingMessages[messageIndex]); messageIntervalRef.current = window.setInterval(() => { messageIndex = (messageIndex + 1) % loadingMessages.length; setLoadingMessage(loadingMessages[messageIndex]); }, 5000); } else { if (messageIntervalRef.current) { clearInterval(messageIntervalRef.current); messageIntervalRef.current = null; } } return () => { if (messageIntervalRef.current) { clearInterval(messageIntervalRef.current); } }; }, [isLoading]); const handleSelectKey = async () => { if (!isStudioEnv) return; await window.aistudio.openSelectKey(); setHasApiKey(true); }; const handleGenerate = async () => { if (!prompt.trim()) { setError('Please enter a prompt to generate a video.'); return; } setIsLoading(true); setError(null); setVideoUrl(null); try { const ai = new GoogleGenAI({ apiKey: process.env.API_KEY }); let operation = await ai.models.generateVideos({ model: 'veo-3.1-fast-generate-preview', prompt: prompt, config: { numberOfVideos: 1, resolution: resolution, aspectRatio: aspectRatio } }); while (!operation.done) { await new Promise(resolve => setTimeout(resolve, 10000)); operation = await ai.operations.getVideosOperation({ operation: operation }); } if (operation.error) { throw new Error(operation.error.message); } const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri; if (!downloadLink) { throw new Error("Video generation succeeded but no download link was provided."); } setLoadingMessage("Downloading your video..."); const videoResponse = await fetch(`${downloadLink}&key=${process.env.API_KEY}`); if (!videoResponse.ok) { throw new Error(`Failed to download video: ${videoResponse.statusText}`); } const videoBlob = await videoResponse.blob(); const url = URL.createObjectURL(videoBlob); setVideoUrl(url); } catch (e) { console.error("Video generation error:", e); let errorMessage = "Failed to generate video. Please try again with a different prompt."; if (e.message?.includes("Requested entity was not found.")) { errorMessage = "API Key not found or invalid. Please select a valid API key."; setHasApiKey(false); } setError(errorMessage); } finally { setIsLoading(false); } }; if (!isStudioEnv) { return ( <div className="flex flex-col items-center justify-center h-full text-center p-4 bg-[var(--background-secondary)]"> <h2 className="text-2xl font-bold mb-2 text-[var(--text-primary)]">Video Generation Unavailable</h2> <p className="text-[var(--text-secondary)] mb-6 max-w-lg"> This feature requires the Google AI Studio environment to function correctly. </p> </div> ); } if (!hasApiKey) { return ( <div className="flex flex-col items-center justify-center h-full text-center p-4 bg-[var(--background-secondary)]"> <h2 className="text-2xl font-bold mb-2 text-[var(--text-primary)]">API Key Required for Video Generation</h2> <p className="text-[var(--text-secondary)] mb-6 max-w-lg"> The Veo video generation model requires a project-linked API key. Please select your key to continue. Video generation may incur costs. See <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="text-[var(--accent-text)] underline">billing information</a> for details. </p> <button onClick={handleSelectKey} className="px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors" > Select API Key </button> </div> ); } return ( <div className="flex flex-col h-full bg-[var(--background-secondary)] text-[var(--text-primary)]"> <div className="p-4 sm:p-8 bg-gradient-to-b from-[var(--background-primary)] to-[var(--background-secondary)]/80 text-center"> <h2 className="text-3xl font-bold text-[var(--text-primary)]">Video Generation (Veo)</h2> <p className="text-[var(--text-secondary)] mt-2">Bring your ideas to life with AI-powered video creation.</p> </div> <div className="flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center"> <div className="w-full max-w-4xl"> <div className="bg-[var(--background-primary)]/80 backdrop-blur-sm p-4 rounded-lg shadow-lg"> <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Describe the video you want to create... (e.g., A neon hologram of a cat driving at top speed)" disabled={isLoading} className="w-full h-24 bg-[var(--background-tertiary)] border border-[var(--border-secondary)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-border)] transition-shadow resize-none" aria-label="Video generation prompt" /> <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4"> <div className="flex items-center gap-4 flex-wrap"> <div className="flex items-center space-x-2"> <span className="font-semibold text-[var(--text-primary)]">Aspect:</span> <div className="flex space-x-1 bg-[var(--background-tertiary)] p-1 rounded-md"> {aspectRatios.map((ratio) => ( <button key={ratio} onClick={() => setAspectRatio(ratio)} className={`px-3 py-1 text-sm font-medium rounded ${ aspectRatio === ratio ? 'bg-[var(--accent-primary)] text-white' : 'hover:bg-[var(--background-hover)] text-[var(--text-primary)]' } transition-colors`} > {ratio} </button> ))} </div> </div> <div className="flex items-center space-x-2"> <span className="font-semibold text-[var(--text-primary)]">Quality:</span> <div className="flex space-x-1 bg-[var(--background-tertiary)] p-1 rounded-md"> {resolutions.map((res) => ( <button key={res} onClick={() => setResolution(res)} className={`px-3 py-1 text-sm font-medium rounded ${ resolution === res ? 'bg-[var(--accent-primary)] text-white' : 'hover:bg-[var(--background-hover)] text-[var(--text-primary)]' } transition-colors`} > {res} </button> ))} </div> </div> </div> <button onClick={handleGenerate} disabled={isLoading || !prompt.trim()} className="w-full sm:w-auto flex items-center justify-center px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" > {isLoading ? ( <> <div className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin mr-2"></div> <span>Generating...</span> </> ) : ( <span>Generate Video</span> )} </button> </div> {error && <p className="text-[var(--danger-text)] text-sm text-center mt-3">{error}</p>} </div> <div className="mt-8 flex-1 flex items-center justify-center bg-[var(--background-primary)] rounded-lg p-4 min-h-[40vh] border border-[var(--border-primary)]"> {isLoading && ( <div className="text-center text-[var(--text-secondary)]"> <div className="w-10 h-10 border-4 border-t-transparent border-[var(--accent-border)] rounded-full animate-spin mx-auto mb-4"></div> <p className="transition-opacity duration-500">{loadingMessage}</p> </div> )} {!isLoading && videoUrl && ( <video src={videoUrl} controls autoPlay loop className="max-w-full max-h-[70vh] object-contain rounded-md shadow-2xl" /> )} {!isLoading && !videoUrl && ( <div className="text-center text-[var(--text-muted)]"> <VideoIcon /> <p className="mt-4">Your generated video will appear here.</p> </div> )} </div> </div> </div> </div> ); };
-
-// From: components/CharacterSelector.tsx
-const CharacterSelector = ({ onSelectCharacter, user, token }) => { const [searchQuery, setSearchQuery] = useState(''); const { favorites, setFavorites, isLoading } = useFavorites({ user, token }); const toggleFavorite = (e, characterId) => { e.stopPropagation(); const currentFavorites = favorites || []; setFavorites( currentFavorites.includes(characterId) ? currentFavorites.filter(id => id !== characterId) : [...currentFavorites, characterId] ); }; const filteredCharacters = useMemo(() => BUNGO_CHARACTERS.filter(char => char.name.toLowerCase().includes(searchQuery.toLowerCase()) ), [searchQuery]); const favoritedCharacters = useMemo(() => filteredCharacters.filter(char => favorites?.includes(char.id)), [filteredCharacters, favorites] ); const otherCharacters = useMemo(() => filteredCharacters.filter(char => !favorites?.includes(char.id)), [filteredCharacters, favorites] ); const CharacterCard = ({ character }) => ( <div onClick={() => onSelectCharacter(character)} className="bg-[var(--background-secondary)] rounded-lg shadow-lg overflow-hidden cursor-pointer group transform hover:scale-105 hover:shadow-[var(--accent-border)]/30 transition-all duration-300 relative" > <img src={character.image} alt={character.name} className="w-full h-40 sm:h-56 object-cover" /> <button onClick={(e) => toggleFavorite(e, character.id)} className="absolute top-2 right-2 p-2 bg-black/50 rounded-full hover:bg-black/70 transition-colors disabled:opacity-50" aria-label={`Favorite ${character.name}`} disabled={isLoading} > <StarIcon filled={favorites?.includes(character.id) ?? false} /> </button> <div className="p-4"> <h3 className="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent-text)] transition-colors">{character.name}</h3> </div> </div> ); return ( <div className="flex flex-col h-full"> <div className="p-4 sm:p-8 bg-gradient-to-b from-[var(--background-primary)] to-[var(--background-secondary)]/80"> <div className="text-center mb-6"> <h2 className="text-3xl font-bold text-[var(--text-primary)]">BSD Mode</h2> <p className="text-[var(--text-secondary)] mt-2">Choose a character to begin your conversation.</p> </div> <div className="max-w-xl mx-auto mb-6"> <input type="text" placeholder="Search characters..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full px-4 py-3 bg-[var(--background-tertiary)] border border-[var(--border-secondary)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-border)] transition-shadow" /> </div> </div> <div className="flex-1 overflow-y-auto p-4 sm:p-8"> <div className="max-w-7xl mx-auto"> {isLoading && !favorites && <p className="text-center text-[var(--text-secondary)]">Loading favorites...</p>} {user && favoritedCharacters.length > 0 && ( <div className="mb-12"> <h3 className="text-2xl font-semibold text-[var(--text-primary)] mb-6 border-l-4 border-[var(--accent-text)] pl-3">Favorites</h3> <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6"> {favoritedCharacters.map(char => <CharacterCard key={char.id} character={char} />)} </div> </div> )} <div> {user && favoritedCharacters.length > 0 && ( <h3 className="text-2xl font-semibold text-[var(--text-primary)] mb-6 border-l-4 border-[var(--border-secondary)] pl-3">All Characters</h3> )} {otherCharacters.length > 0 ? ( <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6"> {otherCharacters.map(char => <CharacterCard key={char.id} character={char} />)} </div> ) : ( !isLoading && ( <div className="text-center text-[var(--text-secondary)] py-10"> <p>No characters found matching your search.</p> </div> ) )} </div> </div> </div> </div> ); };
+const Header = ({ user, onLogin, onLogout, onOpenSettings }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => { if (dropdownRef.current && !dropdownRef.current.contains(event.target)) { setDropdownOpen(false); } };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+  return (
+    React.createElement('header', { className: "bg-[var(--background-primary)]/80 backdrop-blur-sm shadow-lg p-3 sm:p-4 flex justify-between items-center z-20 flex-shrink-0 border-b border-[var(--border-primary)]" },
+      React.createElement('h1', { className: "text-xl sm:text-2xl font-bold text-[var(--text-primary)] tracking-wider" }, React.createElement('span', { className: "text-[var(--accent-text)]" }, "Stellar"), "Ai"),
+      React.createElement('div', { className: "flex items-center space-x-2 sm:space-x-4" },
+        React.createElement('button', { onClick: onOpenSettings, className: "p-2 rounded-full hover:bg-[var(--background-interactive-hover)] transition-colors", 'aria-label': "Open Settings" }, React.createElement(SettingsIcon)),
+        React.createElement('div', { className: "h-8 border-l border-[var(--border-secondary)]" }),
+        React.createElement('div', { className: "relative" },
+          user ?
+            React.createElement('div', { className: "flex items-center" },
+              React.createElement('button', { onClick: () => setDropdownOpen(!dropdownOpen), className: "flex items-center space-x-2" },
+                React.createElement('div', { className: "w-8 h-8 rounded-full bg-[var(--accent-primary)] flex items-center justify-center" }, React.createElement(LoginIcon)),
+                React.createElement('span', { className: "text-[var(--text-primary)] font-semibold hidden sm:inline" }, user.email)
+              ),
+              dropdownOpen && React.createElement('div', { ref: dropdownRef, className: "absolute top-12 right-0 bg-[var(--background-secondary)] rounded-md shadow-lg w-48 py-1 border border-[var(--border-primary)]" },
+                React.createElement('button', { onClick: onLogout, className: "flex items-center w-full text-left px-4 py-2 text-sm text-[var(--danger-text)] hover:bg-[var(--background-interactive-hover)]" }, "Logout")
+              )
+            ) :
+            React.createElement('button', { onClick: onLogin, className: "flex items-center space-x-2 px-3 py-2 bg-[var(--background-secondary)] hover:bg-[var(--background-interactive-hover)] rounded-md transition-colors" },
+              React.createElement(LoginIcon),
+              React.createElement('span', { className: "text-[var(--text-primary)] font-semibold" }, "Login")
+            )
+        )
+      )
+    )
+  );
+};
 
 // From: components/SettingsModal.tsx
-const SettingsModal = ({ isOpen, onClose, settings, onUpdateSettings, mode, setMode }) => { if (!isOpen) return null; const APP_MODES = [ { id: 'chat', name: 'Standard Chat', description: 'Chat with a helpful AI assistant.' }, { id: 'researcher', name: 'Researcher', description: 'Deep thinking with Google Search for detailed answers.' }, { id: 'script_writer', name: 'Script Writer', description: 'Generate scripts for videos and content.' }, { id: 'code', name: 'Coding Assistant', description: 'Get help with programming and code.' }, { id: 'image', name: 'Image Generation', description: 'Create visuals from text prompts.' }, { id: 'video', name: 'Video Generation', description: 'Create videos from text prompts using Veo.' }, { id: 'chess', name: 'Chess Mode', description: 'Play a game of chess against the AI.' }, ]; const THEMES = [ { id: 'light', name: 'Light' }, { id: 'dark', name: 'Dark' }, { id: 'black', name: 'Black' }, ]; const AI_MODELS = [ { id: 'gemini', name: 'StellarAi (Gemini)' }, { id: 'claude', name: 'Claude', disabled: true }, { id: 'chatgpt', name: 'ChatGPT', disabled: true }, ]; const PERFORMANCE_MODES = [ { id: 'standard', name: 'Standard', description: 'Balanced performance and response quality.' }, { id: 'quick', name: 'Quick', description: 'Faster responses for simple queries.' }, { id: 'extreme', name: 'Extremely Quick', description: 'Near-instant responses, may reduce quality.' }, { id: 'deep', name: 'Deep Thinking', description: 'More time for complex questions, better answers.' }, ]; const RESPONSE_STYLES = [ { id: 'standard', name: 'Standard', description: 'Default conversational style.' }, { id: 'essay', name: 'Essay', description: 'Formal, structured, and detailed responses.' }, { id: 'concise', name: 'Concise', description: 'Short, to-the-point answers.' }, { id: 'bullet_points', name: 'Bullet Points', description: 'Formatted with lists for clarity.' }, ]; const handleUpdate = (key, value) => { onUpdateSettings({ ...settings, [key]: value }); }; return ( <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto p-4" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="settings-title" > <div className="bg-[var(--background-secondary)] rounded-xl shadow-2xl p-6 sm:p-8 w-full max-w-2xl my-8 border border-[var(--border-primary)] relative" onClick={(e) => e.stopPropagation()} > <button onClick={onClose} className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors" aria-label="Close settings" > <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /> </svg> </button> <h2 id="settings-title" className="text-2xl font-bold text-[var(--text-primary)] mb-6" > Settings </h2> <div className="mb-8"> <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Theme</h3> <div className="flex items-center bg-[var(--background-tertiary)] p-1 rounded-lg"> {THEMES.map(theme => ( <button key={theme.id} onClick={() => handleUpdate('theme', theme.id)} className={`w-full py-2 text-sm font-semibold rounded-md transition-colors ${settings.theme === theme.id ? 'bg-[var(--accent-primary)] text-white' : 'text-[var(--text-primary)] hover:bg-[var(--background-hover)]'}`} > {theme.name} </button> ))} </div> </div> <div className="mb-8"> <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Application Mode</h3> <div className="grid grid-cols-1 sm:grid-cols-2 gap-2"> {APP_MODES.map(appMode => ( <label key={appMode.id} className={`flex flex-col p-3 rounded-lg border-2 transition-all cursor-pointer ${mode === appMode.id ? 'bg-[var(--background-interactive-selected)] border-[var(--accent-border)]' : 'bg-[var(--background-tertiary)] border-transparent hover:bg-[var(--background-hover)]'}`} > <div className="flex items-center"> <input type="radio" name="app-mode" value={appMode.id} checked={mode === appMode.id} onChange={() => setMode(appMode.id)} className="w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 focus:ring-blue-500" /> <span className="ml-3 text-[var(--text-primary)] font-semibold">{appMode.name}</span> </div> <p className="text-xs text-[var(--text-secondary)] mt-1 ml-7">{appMode.description}</p> </label> ))} </div> </div> <div className="mb-8"> <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Performance (Gemini Only)</h3> <div className="grid grid-cols-1 sm:grid-cols-2 gap-2"> {PERFORMANCE_MODES.map(perfMode => ( <label key={perfMode.id} className={`flex flex-col p-3 rounded-lg border-2 transition-all cursor-pointer ${settings.performanceMode === perfMode.id ? 'bg-[var(--background-interactive-selected)] border-[var(--accent-border)]' : 'bg-[var(--background-tertiary)] border-transparent hover:bg-[var(--background-hover)]'}`} > <div className="flex items-center"> <input type="radio" name="performance-mode" value={perfMode.id} checked={settings.performanceMode === perfMode.id} onChange={() => handleUpdate('performanceMode', perfMode.id)} className="w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 focus:ring-blue-500" /> <span className="ml-3 text-[var(--text-primary)] font-semibold">{perfMode.name}</span> </div> <p className="text-xs text-[var(--text-secondary)] mt-1 ml-7">{perfMode.description}</p> </label> ))} </div> </div> <div className="mb-8"> <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Response Style</h3> <div className="grid grid-cols-1 sm:grid-cols-2 gap-2"> {RESPONSE_STYLES.map(style => ( <label key={style.id} className={`flex flex-col p-3 rounded-lg border-2 transition-all cursor-pointer ${settings.responseStyle === style.id ? 'bg-[var(--background-interactive-selected)] border-[var(--accent-border)]' : 'bg-[var(--background-tertiary)] border-transparent hover:bg-[var(--background-hover)]'}`} > <div className="flex items-center"> <input type="radio" name="response-style" value={style.id} checked={settings.responseStyle === style.id} onChange={() => handleUpdate('responseStyle', style.id)} className="w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 focus:ring-blue-500" /> <span className="ml-3 text-[var(--text-primary)] font-semibold">{style.name}</span> </div> <p className="text-xs text-[var(--text-secondary)] mt-1 ml-7">{style.description}</p> </label> ))} </div> </div> <div className="mb-8"> <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">AI Model</h3> <div className="space-y-2"> {AI_MODELS.map(model => ( <label key={model.id} className={`flex items-center p-3 rounded-lg border-2 transition-all ${settings.aiModel === model.id ? 'bg-[var(--background-interactive-selected)] border-[var(--accent-border)]' : 'bg-[var(--background-tertiary)] border-transparent'} ${model.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-[var(--background-hover)]'}`} > <input type="radio" name="ai-model" value={model.id} checked={settings.aiModel === model.id} onChange={() => !model.disabled && handleUpdate('aiModel', model.id)} disabled={model.disabled} className="w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 focus:ring-blue-500" /> <span className="ml-3 text-[var(--text-primary)]">{model.name}</span> {model.disabled && <span className="ml-auto text-xs text-[var(--text-secondary)] bg-[var(--background-hover)] px-2 py-1 rounded-full">Coming Soon</span>} </label> ))} </div> </div> <div> <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3" > Content Filter </h3> <div className="flex items-center justify-between p-3 bg-[var(--background-tertiary)] rounded-lg"> <label htmlFor="nsfw-toggle-button" className="text-[var(--text-primary)] cursor-pointer pr-4"> Enable NSFW Content <p className="text-xs text-[var(--text-secondary)] mt-1">Allows for mature topics and stronger language. Content policies still apply.</p> </label> <button id="nsfw-toggle-button" onClick={() => handleUpdate('isNsfw', !settings.isNsfw)} className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors flex-shrink-0 ${settings.isNsfw ? 'bg-[var(--danger-background)]' : 'bg-[var(--background-hover)]'}`} aria-pressed={settings.isNsfw} > <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${settings.isNsfw ? 'translate-x-6' : 'translate-x-1'}`} /> </button> </div> </div> </div> </div> ); };
+const SettingsModal = ({ isOpen, onClose, settings, onUpdateSettings, mode, setMode }) => {
+  if (!isOpen) return null;
+  const APP_MODES = [ { id: 'chat', name: 'Standard Chat', description: 'Chat with a helpful AI assistant.' }, { id: 'researcher', name: 'Researcher', description: 'Deep thinking with Google Search for detailed answers.' }, { id: 'script_writer', name: 'Script Writer', description: 'Generate scripts for videos and content.' }, { id: 'code', name: 'Coding Assistant', description: 'Get help with programming and code.' }, { id: 'image', name: 'Image Generation', description: 'Create visuals from text prompts.' }, { id: 'video', name: 'Video Generation', description: 'Create videos from text prompts using Veo.' }, { id: 'chess', name: 'Chess Mode', description: 'Play a game of chess against the AI.' }, ];
+  const THEMES = [ { id: 'light', name: 'Light' }, { id: 'dark', name: 'Dark' }, { id: 'black', name: 'Black' }, ];
+  const AI_MODELS = [ { id: 'gemini', name: 'StellarAi (Gemini)' }, { id: 'claude', name: 'Claude', disabled: true }, { id: 'chatgpt', name: 'ChatGPT', disabled: true }, ];
+  const PERFORMANCE_MODES = [ { id: 'standard', name: 'Standard', description: 'Balanced performance and response quality.' }, { id: 'quick', name: 'Quick', description: 'Faster responses for simple queries.' }, { id: 'extreme', name: 'Extremely Quick', description: 'Near-instant responses, may reduce quality.' }, { id: 'deep', name: 'Deep Thinking', description: 'More time for complex questions, better answers.' }, ];
+  const RESPONSE_STYLES = [ { id: 'standard', name: 'Standard', description: 'Default conversational style.' }, { id: 'essay', name: 'Essay', description: 'Formal, structured, and detailed responses.' }, { id: 'concise', name: 'Concise', description: 'Short, to-the-point answers.' }, { id: 'bullet_points', name: 'Bullet Points', description: 'Formatted with lists for clarity.' }, ];
+  const handleUpdate = (key, value) => { onUpdateSettings({ ...settings, [key]: value }); };
+  const RadioGroup = ({ title, options, selected, onChange, name, renderDescription }) => (
+    React.createElement('div', { className: "mb-8" },
+      React.createElement('h3', { className: "text-lg font-semibold text-[var(--text-primary)] mb-3" }, title),
+      React.createElement('div', { className: "grid grid-cols-1 sm:grid-cols-2 gap-2" },
+        options.map(option =>
+          React.createElement('label', { key: option.id, className: `flex flex-col p-3 rounded-lg border-2 transition-all cursor-pointer ${selected === option.id ? 'bg-[var(--background-interactive-selected)] border-[var(--accent-border)]' : 'bg-[var(--background-tertiary)] border-transparent hover:bg-[var(--background-hover)]'}` },
+            React.createElement('div', { className: "flex items-center" },
+              React.createElement('input', { type: "radio", name: name, value: option.id, checked: selected === option.id, onChange: () => onChange(option.id), className: "w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 focus:ring-blue-500" }),
+              React.createElement('span', { className: "ml-3 text-[var(--text-primary)] font-semibold" }, option.name)
+            ),
+            React.createElement('p', { className: "text-xs text-[var(--text-secondary)] mt-1 ml-7" }, option.description)
+          )
+        )
+      )
+    )
+  );
+  return (
+    React.createElement('div', { className: "fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto p-4", onClick: onClose, role: "dialog", 'aria-modal': "true", 'aria-labelledby': "settings-title" },
+      React.createElement('div', { className: "bg-[var(--background-secondary)] rounded-xl shadow-2xl p-6 sm:p-8 w-full max-w-2xl my-8 border border-[var(--border-primary)] relative", onClick: (e) => e.stopPropagation() },
+        React.createElement('button', { onClick: onClose, className: "absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors", 'aria-label': "Close settings" },
+          React.createElement('svg', { xmlns: "http://www.w3.org/2000/svg", className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" }, React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M6 18L18 6M6 6l12 12" }))
+        ),
+        React.createElement('h2', { id: "settings-title", className: "text-2xl font-bold text-[var(--text-primary)] mb-6" }, "Settings"),
+        React.createElement('div', { className: "mb-8" },
+          React.createElement('h3', { className: "text-lg font-semibold text-[var(--text-primary)] mb-3" }, "Theme"),
+          React.createElement('div', { className: "flex items-center bg-[var(--background-tertiary)] p-1 rounded-lg" },
+            THEMES.map(theme => React.createElement('button', { key: theme.id, onClick: () => handleUpdate('theme', theme.id), className: `w-full py-2 text-sm font-semibold rounded-md transition-colors ${settings.theme === theme.id ? 'bg-[var(--accent-primary)] text-white' : 'text-[var(--text-primary)] hover:bg-[var(--background-hover)]'}` }, theme.name))
+          )
+        ),
+        React.createElement(RadioGroup, { title: "Application Mode", options: APP_MODES, selected: mode, onChange: setMode, name: "app-mode" }),
+        React.createElement(RadioGroup, { title: "Performance (Gemini Only)", options: PERFORMANCE_MODES, selected: settings.performanceMode, onChange: (v) => handleUpdate('performanceMode', v), name: "performance-mode" }),
+        React.createElement(RadioGroup, { title: "Response Style", options: RESPONSE_STYLES, selected: settings.responseStyle, onChange: (v) => handleUpdate('responseStyle', v), name: "response-style" }),
+        React.createElement('div', { className: "mb-8" },
+          React.createElement('h3', { className: "text-lg font-semibold text-[var(--text-primary)] mb-3" }, "AI Model"),
+          React.createElement('div', { className: "space-y-2" },
+            AI_MODELS.map(model => React.createElement('label', { key: model.id, className: `flex items-center p-3 rounded-lg border-2 transition-all ${settings.aiModel === model.id ? 'bg-[var(--background-interactive-selected)] border-[var(--accent-border)]' : 'bg-[var(--background-tertiary)] border-transparent'} ${model.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-[var(--background-hover)]'}` },
+              React.createElement('input', { type: "radio", name: "ai-model", value: model.id, checked: settings.aiModel === model.id, onChange: () => !model.disabled && handleUpdate('aiModel', model.id), disabled: model.disabled, className: "w-4 h-4 text-blue-600 bg-gray-600 border-gray-500 focus:ring-blue-500" }),
+              React.createElement('span', { className: "ml-3 text-[var(--text-primary)]" }, model.name),
+              model.disabled && React.createElement('span', { className: "ml-auto text-xs text-[var(--text-secondary)] bg-[var(--background-hover)] px-2 py-1 rounded-full" }, "Coming Soon")
+            ))
+          )
+        ),
+        React.createElement('div', null,
+          React.createElement('h3', { className: "text-lg font-semibold text-[var(--text-primary)] mb-3" }, "Content Filter"),
+          React.createElement('div', { className: "flex items-center justify-between p-3 bg-[var(--background-tertiary)] rounded-lg" },
+            React.createElement('label', { htmlFor: "nsfw-toggle-button", className: "text-[var(--text-primary)] cursor-pointer pr-4" }, "Enable NSFW Content", React.createElement('p', { className: "text-xs text-[var(--text-secondary)] mt-1" }, "Allows for mature topics and stronger language. Content policies still apply.")),
+            React.createElement('button', { id: "nsfw-toggle-button", onClick: () => handleUpdate('isNsfw', !settings.isNsfw), className: `relative inline-flex items-center h-6 rounded-full w-11 transition-colors flex-shrink-0 ${settings.isNsfw ? 'bg-[var(--danger-background)]' : 'bg-[var(--background-hover)]'}`, 'aria-pressed': settings.isNsfw },
+              React.createElement('span', { className: `inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${settings.isNsfw ? 'translate-x-6' : 'translate-x-1'}` })
+            )
+          )
+        )
+      )
+    )
+  );
+};
+
+
+// From: components/ChatWindow.tsx
+const ChatWindow = ({ chatId, chatTitle, systemPrompt, initialGreeting, placeholderText = 'Type your message...', enableSearch, character, onBack, isNsfw, performanceMode = 'standard', }) => {
+  const [messages, setMessages] = useLocalStorage(`chatHistory-${chatId}`, []);
+  const [userInput, setUserInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [chatSession, setChatSession] = useState(null);
+  const messagesEndRef = useRef(null);
+  useEffect(() => {
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const config = { systemInstruction: systemPrompt };
+      let budget;
+      if (enableSearch) { config.tools = [{ googleSearch: {} }]; budget = 8192; }
+      switch (performanceMode) {
+        case 'deep': budget = 16384; break;
+        case 'quick': budget = 2048; break;
+        case 'extreme': budget = 0; break;
+      }
+      if (budget !== undefined) { config.thinkingConfig = { thinkingBudget: budget }; }
+      
+      const history = messages.length > 1 ? messages.slice(1).filter(msg => msg.content).map(msg => ({ role: msg.role, parts: [{ text: msg.content }] })) : [];
+      
+      const newChat = ai.chats.create({ model: 'gemini-2.5-flash', config, history });
+      setChatSession(newChat);
+      if (messages.length === 0) { setMessages([{ role: 'model', content: initialGreeting }]); }
+    } catch (e) { console.error("Failed to initialize Gemini:", e); setError("Failed to initialize AI session. Please check your API key."); }
+  }, [systemPrompt, initialGreeting, enableSearch, chatId, performanceMode]);
+
+  const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); };
+  useEffect(scrollToBottom, [messages]);
+  
+  const handleSendMessage = useCallback(async () => {
+    if (!userInput.trim() || isLoading || !chatSession) return;
+    const userMessage = { role: 'user', content: userInput };
+    setMessages(prev => [...prev, userMessage]);
+    setUserInput(''); setIsLoading(true); setError(null);
+    try {
+      const stream = await chatSession.sendMessageStream({ message: userInput });
+      let text = ''; let groundingChunks = [];
+      setMessages(prev => [...prev, { role: 'model', content: '' }]);
+      for await (const chunk of stream) {
+        text += chunk.text;
+        if (chunk.candidates?.[0]?.groundingMetadata?.groundingChunks) { groundingChunks = [...chunk.candidates[0].groundingMetadata.groundingChunks]; }
+        setMessages(prev => {
+          const updatedLastMessage = { ...prev[prev.length - 1], content: text, groundingChunks };
+          return [...prev.slice(0, -1), updatedLastMessage];
+        });
+      }
+    } catch (e) { console.error("Gemini API Error:", e); setError("An error occurred while getting a response. Please try again."); setMessages(prev => [...prev, { role: 'model', content: "I'm sorry, I encountered an error." }]); }
+    finally { setIsLoading(false); }
+  }, [userInput, isLoading, chatSession, setMessages]);
+  
+  const handleKeyPress = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } };
+  
+  return (
+    React.createElement('div', { className: "flex flex-col h-full bg-[var(--background-secondary)]" },
+      React.createElement('div', { className: "flex items-center p-3 border-b border-[var(--border-primary)] bg-[var(--background-primary)] flex-shrink-0" },
+        onBack && React.createElement('button', { onClick: onBack, className: "p-2 mr-2 -ml-2 rounded-full hover:bg-[var(--background-interactive-hover)] transition-colors", 'aria-label': "Back" }, React.createElement(BackIcon)),
+        character && React.createElement('img', { src: character.image, alt: character.name, className: "w-10 h-10 rounded-full mr-3 object-cover" }),
+        React.createElement('h2', { className: "text-xl font-semibold text-[var(--text-primary)] truncate" }, character ? character.name : chatTitle)
+      ),
+      React.createElement('div', { className: "flex-grow p-4 overflow-y-auto" },
+        React.createElement('div', { className: "space-y-4" },
+          messages.map((msg, index) =>
+            React.createElement('div', { key: index, className: `flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : ''}` },
+              msg.role === 'model' && React.createElement('div', { className: "flex-shrink-0 w-8 h-8 rounded-full bg-[var(--background-tertiary)] flex items-center justify-center" }, character ? React.createElement('img', { src: character.image, alt: character.name, className: "w-full h-full rounded-full object-cover" }) : React.createElement(BotIcon)),
+              React.createElement('div', { className: `p-3 rounded-2xl max-w-md md:max-w-lg ${msg.role === 'user' ? 'bg-[var(--accent-primary)] text-white rounded-br-none' : 'bg-[var(--background-tertiary)] text-[var(--text-primary)] rounded-bl-none'}` },
+                React.createElement('p', { className: "whitespace-pre-wrap" }, msg.content),
+                msg.groundingChunks && msg.groundingChunks.length > 0 &&
+                  React.createElement('div', { className: "mt-3 pt-2 border-t border-[var(--border-secondary)]" },
+                    React.createElement('h4', { className: "text-xs font-semibold text-[var(--text-secondary)] mb-2" }, "Sources:"),
+                    React.createElement('div', { className: "flex flex-wrap gap-2" },
+                      msg.groundingChunks.map((chunk, i) => chunk.web?.uri && React.createElement('a', { href: chunk.web.uri, key: i, target: "_blank", rel: "noopener noreferrer", className: "text-xs bg-[var(--background-hover)] hover:bg-[var(--background-interactive-hover)] text-[var(--accent-text)] px-2 py-1 rounded-full transition-colors truncate" }, chunk.web.title || new URL(chunk.web.uri).hostname))
+                    )
+                  )
+              ),
+              msg.role === 'user' && React.createElement('div', { className: "flex-shrink-0 w-8 h-8 rounded-full bg-[var(--accent-primary)] flex items-center justify-center" }, React.createElement(UserIcon))
+            )
+          ),
+          React.createElement('div', { ref: messagesEndRef })
+        )
+      ),
+      React.createElement('div', { className: "p-4 bg-[var(--background-primary)]/80 backdrop-blur-sm border-t border-[var(--border-primary)] flex-shrink-0" },
+        error && React.createElement('p', { className: "text-[var(--danger-text)] text-sm text-center mb-2" }, error),
+        React.createElement('div', { className: "flex items-center bg-[var(--background-tertiary)] rounded-lg" },
+          React.createElement('input', { type: "text", value: userInput, onChange: (e) => setUserInput(e.target.value), onKeyPress: handleKeyPress, placeholder: isLoading ? 'Waiting for response...' : placeholderText, disabled: isLoading, className: "w-full bg-transparent p-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none" }),
+          React.createElement('button', { onClick: handleSendMessage, disabled: isLoading || !userInput.trim(), className: "p-3 text-white rounded-r-lg disabled:text-[var(--text-muted)] disabled:cursor-not-allowed hover:bg-[var(--accent-primary)] transition-colors" },
+            isLoading ? React.createElement('div', { className: "w-5 h-5 border-2 border-t-transparent border-[var(--text-primary)] rounded-full animate-spin" }) : React.createElement(SendIcon)
+          )
+        )
+      )
+    )
+  );
+};
+
+// From: components/CharacterSelector.tsx
+const CharacterSelector = ({ onSelectCharacter, user, token }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const { favorites, setFavorites, isLoading } = useFavorites({ user, token });
+  const toggleFavorite = (e, characterId) => { e.stopPropagation(); const currentFavorites = favorites || []; setFavorites(currentFavorites.includes(characterId) ? currentFavorites.filter(id => id !== characterId) : [...currentFavorites, characterId]); };
+  const filteredCharacters = useMemo(() => BUNGO_CHARACTERS.filter(char => char.name.toLowerCase().includes(searchQuery.toLowerCase())), [searchQuery]);
+  const favoritedCharacters = useMemo(() => filteredCharacters.filter(char => favorites?.includes(char.id)), [filteredCharacters, favorites]);
+  const otherCharacters = useMemo(() => filteredCharacters.filter(char => !favorites?.includes(char.id)), [filteredCharacters, favorites]);
+  const CharacterCard = ({ character }) => (
+    React.createElement('div', { onClick: () => onSelectCharacter(character), className: "bg-[var(--background-secondary)] rounded-lg shadow-lg overflow-hidden cursor-pointer group transform hover:scale-105 hover:shadow-[var(--accent-border)]/30 transition-all duration-300 relative" },
+      React.createElement('img', { src: character.image, alt: character.name, className: "w-full h-40 sm:h-56 object-cover" }),
+      React.createElement('button', { onClick: (e) => toggleFavorite(e, character.id), className: "absolute top-2 right-2 p-2 bg-black/50 rounded-full hover:bg-black/70 transition-colors disabled:opacity-50", 'aria-label': `Favorite ${character.name}`, disabled: isLoading }, React.createElement(StarIcon, { filled: favorites?.includes(character.id) ?? false })),
+      React.createElement('div', { className: "p-4" }, React.createElement('h3', { className: "text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent-text)] transition-colors" }, character.name))
+    )
+  );
+  return (
+    React.createElement('div', { className: "flex flex-col h-full" },
+      React.createElement('div', { className: "p-4 sm:p-8 bg-gradient-to-b from-[var(--background-primary)] to-[var(--background-secondary)]/80" },
+        React.createElement('div', { className: "text-center mb-6" }, React.createElement('h2', { className: "text-3xl font-bold text-[var(--text-primary)]" }, "BSD Mode"), React.createElement('p', { className: "text-[var(--text-secondary)] mt-2" }, "Choose a character to begin your conversation.")),
+        React.createElement('div', { className: "max-w-xl mx-auto mb-6" }, React.createElement('input', { type: "text", placeholder: "Search characters...", value: searchQuery, onChange: (e) => setSearchQuery(e.target.value), className: "w-full px-4 py-3 bg-[var(--background-tertiary)] border border-[var(--border-secondary)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-border)] transition-shadow" }))
+      ),
+      React.createElement('div', { className: "flex-1 overflow-y-auto p-4 sm:p-8" },
+        React.createElement('div', { className: "max-w-7xl mx-auto" },
+          isLoading && !favorites && React.createElement('p', { className: "text-center text-[var(--text-secondary)]" }, "Loading favorites..."),
+          user && favoritedCharacters.length > 0 && React.createElement('div', { className: "mb-12" }, React.createElement('h3', { className: "text-2xl font-semibold text-[var(--text-primary)] mb-6 border-l-4 border-[var(--accent-text)] pl-3" }, "Favorites"), React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6" }, favoritedCharacters.map(char => React.createElement(CharacterCard, { key: char.id, character: char })))),
+          React.createElement('div', null,
+            user && favoritedCharacters.length > 0 && React.createElement('h3', { className: "text-2xl font-semibold text-[var(--text-primary)] mb-6 border-l-4 border-[var(--border-secondary)] pl-3" }, "All Characters"),
+            otherCharacters.length > 0 ? React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6" }, otherCharacters.map(char => React.createElement(CharacterCard, { key: char.id, character: char }))) : !isLoading && React.createElement('div', { className: "text-center text-[var(--text-secondary)] py-10" }, React.createElement('p', null, "No characters found matching your search."))
+          )
+        )
+      )
+    )
+  );
+};
+
+// From: components/ImageGenerator.tsx
+const ImageGenerator = () => {
+  const [prompt, setPrompt] = useState('');
+  const [aspectRatio, setAspectRatio] = useState('1:1');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const aspectRatios = ["1:1", "16:9", "9:16", "4:3", "3:4"];
+  const handleGenerate = async () => {
+    if (!prompt.trim()) { setError('Please enter a prompt to generate an image.'); return; }
+    setIsLoading(true); setError(null); setImageUrl(null);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const response = await ai.models.generateImages({ model: 'imagen-4.0-generate-001', prompt, config: { numberOfImages: 1, outputMimeType: 'image/jpeg', aspectRatio } });
+      setImageUrl(`data:image/jpeg;base64,${response.generatedImages[0].image.imageBytes}`);
+    } catch (e) { console.error("Image generation error:", e); setError("Failed to generate image. The model may have refused the prompt. Please try again with a different prompt."); }
+    finally { setIsLoading(false); }
+  };
+  const handleKeyPress = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); } };
+  return (
+    React.createElement('div', { className: "flex flex-col h-full bg-[var(--background-secondary)] text-[var(--text-primary)]" },
+      React.createElement('div', { className: "p-4 sm:p-8 bg-gradient-to-b from-[var(--background-primary)] to-[var(--background-secondary)]/80 text-center" }, React.createElement('h2', { className: "text-3xl font-bold text-[var(--text-primary)]" }, "Image Generation"), React.createElement('p', { className: "text-[var(--text-secondary)] mt-2" }, "Create stunning visuals with the power of AI.")),
+      React.createElement('div', { className: "flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center" },
+        React.createElement('div', { className: "w-full max-w-4xl" },
+          React.createElement('div', { className: "bg-[var(--background-primary)]/80 backdrop-blur-sm p-4 rounded-lg shadow-lg" },
+            React.createElement('textarea', { value: prompt, onChange: (e) => setPrompt(e.target.value), onKeyPress: handleKeyPress, placeholder: "Describe the image you want to create... (e.g., A robot holding a red skateboard)", disabled: isLoading, className: "w-full h-24 bg-[var(--background-tertiary)] border border-[var(--border-secondary)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-border)] transition-shadow resize-none", 'aria-label': "Image generation prompt" }),
+            React.createElement('div', { className: "mt-4 flex flex-col sm:flex-row items-center justify-between gap-4" },
+              React.createElement('div', { className: "flex items-center space-x-2" }, React.createElement('span', { className: "font-semibold text-[var(--text-primary)]" }, "Aspect Ratio:"), React.createElement('div', { className: "flex space-x-1 bg-[var(--background-tertiary)] p-1 rounded-md" }, aspectRatios.map(ratio => React.createElement('button', { key: ratio, onClick: () => setAspectRatio(ratio), className: `px-3 py-1 text-sm font-medium rounded ${aspectRatio === ratio ? 'bg-[var(--accent-primary)] text-white' : 'hover:bg-[var(--background-hover)] text-[var(--text-primary)]'} transition-colors` }, ratio)))),
+              React.createElement('button', { onClick: handleGenerate, disabled: isLoading || !prompt.trim(), className: "w-full sm:w-auto flex items-center justify-center px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" }, isLoading ? React.createElement(React.Fragment, null, React.createElement('div', { className: "w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin mr-2" }), React.createElement('span', null, "Generating...")) : React.createElement('span', null, "Generate Image"))
+            ),
+            error && React.createElement('p', { className: "text-[var(--danger-text)] text-sm text-center mt-3" }, error)
+          ),
+          React.createElement('div', { className: "mt-8 flex-1 flex items-center justify-center bg-[var(--background-primary)] rounded-lg p-4 min-h-[40vh] border border-[var(--border-primary)]" },
+            isLoading && React.createElement('div', { className: "text-center text-[var(--text-secondary)]" }, React.createElement('div', { className: "w-10 h-10 border-4 border-t-transparent border-[var(--accent-border)] rounded-full animate-spin mx-auto mb-4" }), React.createElement('p', null, "Creating your vision... this may take a moment.")),
+            !isLoading && imageUrl && React.createElement('img', { src: imageUrl, alt: prompt, className: "max-w-full max-h-[70vh] object-contain rounded-md shadow-2xl" }),
+            !isLoading && !imageUrl && React.createElement('div', { className: "text-center text-[var(--text-muted)]" }, React.createElement(ImageIcon), React.createElement('p', { className: "mt-4" }, "Your generated image will appear here."))
+          )
+        )
+      )
+    )
+  );
+};
+
+// From: components/VideoGenerator.tsx
+const VideoGenerator = () => {
+    const [prompt, setPrompt] = useState('');
+    const [aspectRatio, setAspectRatio] = useState('16:9');
+    const [resolution, setResolution] = useState('720p');
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState('');
+    const [error, setError] = useState(null);
+    const [videoUrl, setVideoUrl] = useState(null);
+    const [hasApiKey, setHasApiKey] = useState(false);
+    const [isStudioEnv, setIsStudioEnv] = useState(false);
+    const messageIntervalRef = useRef(null);
+    const loadingMessages = [ "Warming up the video director AI...", "Storyboarding your concept...", "Setting up the virtual cameras...", "Rendering the first few frames...", "Applying visual effects...", "This is taking a bit longer than usual, but we're getting there...", "Compositing scenes together...", "Adding the final touches...", "Almost ready to roll!", ];
+    const aspectRatios = ["16:9", "9:16"];
+    const resolutions = ["720p", "1080p"];
+
+    useEffect(() => {
+        const checkEnvironment = async () => {
+            if (window.aistudio && typeof window.aistudio.hasSelectedApiKey === 'function') {
+                setIsStudioEnv(true);
+                setHasApiKey(await window.aistudio.hasSelectedApiKey());
+            } else { console.warn("AI Studio environment not detected. Video generation will be disabled."); }
+        };
+        checkEnvironment();
+    }, []);
+    
+    useEffect(() => { return () => { if (videoUrl) URL.revokeObjectURL(videoUrl); }; }, [videoUrl]);
+    
+    useEffect(() => {
+        if (isLoading) {
+            let messageIndex = 0;
+            setLoadingMessage(loadingMessages[0]);
+            messageIntervalRef.current = window.setInterval(() => { messageIndex = (messageIndex + 1) % loadingMessages.length; setLoadingMessage(loadingMessages[messageIndex]); }, 5000);
+        } else if (messageIntervalRef.current) { clearInterval(messageIntervalRef.current); }
+        return () => { if (messageIntervalRef.current) clearInterval(messageIntervalRef.current); };
+    }, [isLoading]);
+
+    const handleSelectKey = async () => { if (!isStudioEnv) return; await window.aistudio.openSelectKey(); setHasApiKey(true); };
+
+    const handleGenerate = async () => {
+        if (!prompt.trim()) { setError('Please enter a prompt to generate a video.'); return; }
+        setIsLoading(true); setError(null); setVideoUrl(null);
+        try {
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            let operation = await ai.models.generateVideos({ model: 'veo-3.1-fast-generate-preview', prompt, config: { numberOfVideos: 1, resolution, aspectRatio } });
+            while (!operation.done) { await new Promise(resolve => setTimeout(resolve, 10000)); operation = await ai.operations.getVideosOperation({ operation }); }
+            if (operation.error) throw new Error(operation.error.message);
+            const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+            if (!downloadLink) throw new Error("Video generation succeeded but no download link was provided.");
+            setLoadingMessage("Downloading your video...");
+            const videoResponse = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+            if (!videoResponse.ok) throw new Error(`Failed to download video: ${videoResponse.statusText}`);
+            setVideoUrl(URL.createObjectURL(await videoResponse.blob()));
+        } catch (e) {
+            console.error("Video generation error:", e);
+            let errorMessage = "Failed to generate video. Please try again with a different prompt.";
+            if (e.message?.includes("Requested entity was not found.")) { errorMessage = "API Key not found or invalid. Please select a valid API key."; setHasApiKey(false); }
+            setError(errorMessage);
+        } finally { setIsLoading(false); }
+    };
+
+    if (!isStudioEnv) { return React.createElement('div', { className: "flex flex-col items-center justify-center h-full text-center p-4 bg-[var(--background-secondary)]" }, React.createElement('h2', { className: "text-2xl font-bold mb-2 text-[var(--text-primary)]" }, "Video Generation Unavailable"), React.createElement('p', { className: "text-[var(--text-secondary)] mb-6 max-w-lg" }, "This feature requires the Google AI Studio environment to function correctly.")); }
+    if (!hasApiKey) { return React.createElement('div', { className: "flex flex-col items-center justify-center h-full text-center p-4 bg-[var(--background-secondary)]" }, React.createElement('h2', { className: "text-2xl font-bold mb-2 text-[var(--text-primary)]" }, "API Key Required for Video Generation"), React.createElement('p', { className: "text-[var(--text-secondary)] mb-6 max-w-lg" }, "The Veo video generation model requires a project-linked API key. Please select your key to continue. Video generation may incur costs. See ", React.createElement('a', { href: "https://ai.google.dev/gemini-api/docs/billing", target: "_blank", rel: "noopener noreferrer", className: "text-[var(--accent-text)] underline" }, "billing information"), " for details."), React.createElement('button', { onClick: handleSelectKey, className: "px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors" }, "Select API Key")); }
+    
+    return (
+        React.createElement('div', { className: "flex flex-col h-full bg-[var(--background-secondary)] text-[var(--text-primary)]" },
+            React.createElement('div', { className: "p-4 sm:p-8 bg-gradient-to-b from-[var(--background-primary)] to-[var(--background-secondary)]/80 text-center" }, React.createElement('h2', { className: "text-3xl font-bold text-[var(--text-primary)]" }, "Video Generation (Veo)"), React.createElement('p', { className: "text-[var(--text-secondary)] mt-2" }, "Bring your ideas to life with AI-powered video creation.")),
+            React.createElement('div', { className: "flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center" },
+                React.createElement('div', { className: "w-full max-w-4xl" },
+                    React.createElement('div', { className: "bg-[var(--background-primary)]/80 backdrop-blur-sm p-4 rounded-lg shadow-lg" },
+                        React.createElement('textarea', { value: prompt, onChange: (e) => setPrompt(e.target.value), placeholder: "Describe the video you want to create... (e.g., A neon hologram of a cat driving at top speed)", disabled: isLoading, className: "w-full h-24 bg-[var(--background-tertiary)] border border-[var(--border-secondary)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-border)] transition-shadow resize-none" }),
+                        React.createElement('div', { className: "mt-4 flex flex-col sm:flex-row items-center justify-between gap-4" },
+                            React.createElement('div', { className: "flex items-center gap-4 flex-wrap" },
+                                React.createElement('div', { className: "flex items-center space-x-2" }, React.createElement('span', { className: "font-semibold" }, "Aspect:"), React.createElement('div', { className: "flex space-x-1 bg-[var(--background-tertiary)] p-1 rounded-md" }, aspectRatios.map(r => React.createElement('button', { key: r, onClick: () => setAspectRatio(r), className: `px-3 py-1 text-sm font-medium rounded ${aspectRatio === r ? 'bg-[var(--accent-primary)] text-white' : 'hover:bg-[var(--background-hover)]'}` }, r)))),
+                                React.createElement('div', { className: "flex items-center space-x-2" }, React.createElement('span', { className: "font-semibold" }, "Quality:"), React.createElement('div', { className: "flex space-x-1 bg-[var(--background-tertiary)] p-1 rounded-md" }, resolutions.map(r => React.createElement('button', { key: r, onClick: () => setResolution(r), className: `px-3 py-1 text-sm font-medium rounded ${resolution === r ? 'bg-[var(--accent-primary)] text-white' : 'hover:bg-[var(--background-hover)]'}` }, r))))
+                            ),
+                            React.createElement('button', { onClick: handleGenerate, disabled: isLoading || !prompt.trim(), className: "w-full sm:w-auto flex items-center justify-center px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" }, isLoading ? React.createElement(React.Fragment, null, React.createElement('div', { className: "w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin mr-2" }), React.createElement('span', null, "Generating...")) : React.createElement('span', null, "Generate Video"))
+                        ),
+                        error && React.createElement('p', { className: "text-[var(--danger-text)] text-sm text-center mt-3" }, error)
+                    ),
+                    React.createElement('div', { className: "mt-8 flex-1 flex items-center justify-center bg-[var(--background-primary)] rounded-lg p-4 min-h-[40vh] border border-[var(--border-primary)]" },
+                        isLoading && React.createElement('div', { className: "text-center text-[var(--text-secondary)]" }, React.createElement('div', { className: "w-10 h-10 border-4 border-t-transparent border-[var(--accent-border)] rounded-full animate-spin mx-auto mb-4" }), React.createElement('p', { className: "transition-opacity duration-500" }, loadingMessage)),
+                        !isLoading && videoUrl && React.createElement('video', { src: videoUrl, controls: true, autoPlay: true, loop: true, className: "max-w-full max-h-[70vh] object-contain rounded-md shadow-2xl" }),
+                        !isLoading && !videoUrl && React.createElement('div', { className: "text-center text-[var(--text-muted)]" }, React.createElement(VideoIcon), React.createElement('p', { className: "mt-4" }, "Your generated video will appear here."))
+                    )
+                )
+            )
+        )
+    );
+};
+
 
 // From: App.tsx
-const PROMPTS = { gemini: { standard: "You are StellarAi, a helpful and knowledgeable AI assistant with a friendly and slightly curious personality. Provide clear, concise, and accurate information. When asked for an opinion, be balanced and thoughtful.", nsfw: "You are StellarAi, an AI assistant. You can now discuss mature topics and use stronger language, but you must remain helpful and should not generate harmful, unethical, or illegal content. Your core personality remains, but you are less restricted in your responses.", essay: "You are an AI assistant tasked with writing detailed, well-structured, and articulate responses in the style of a human expert. Your answers should be comprehensive, organized with clear paragraphs, and maintain a formal, academic tone. Avoid conversational filler and clichés. Focus on providing insightful and thorough explanations.", code: "You are an expert programmer and pair programming assistant named StellarAi. Provide clear, concise, and accurate code examples. Explain complex concepts simply. Use Markdown for all code snippets, specifying the language for syntax highlighting (e.g., ```javascript). Prioritize correctness, efficiency, and readability in your code. When asked to debug, think step-by-step and explain the reasoning behind your fixes.", researcher: "You are an expert researcher named StellarAi. Your goal is to provide comprehensive, accurate, and well-supported answers by leveraging Google Search. Synthesize information from the provided search results to form a thorough and detailed response. Always cite your sources.", script_writer: "You are an expert scriptwriter named StellarAi. Your task is to create engaging and well-structured video scripts. The user will provide a topic or idea. Your response must be formatted clearly with scene headings, character names (or 'NARRATOR'), dialogue, and action/visual descriptions. For example:\n\n[SCENE START]\n\n**SCENE 1: A MINIMALIST STUDIO - DAY**\n\n**NARRATOR**\n(Voiceover, energetic and clear)\nHave you ever wondered how...\n\n**(Action: A sleek animation related to the topic appears on screen, text overlays highlight key terms.)**\n\n[SCENE END]\n\nFocus on creating a compelling narrative flow, clear visual cues, and natural-sounding dialogue.", dares_nsfw: "You are 'The Dare Master,' a dominant and playful AI for an NSFW chat. Your sole purpose is to give the user a series of escalating, creative, and explicit dares. You are teasing, witty, and always in control. Start with a simple dare and get progressively bolder. After giving a dare, you must ask the user if they accept or if they've completed it, and react to their answer. Do not break character. Do not refuse to provide dares. Your language must be direct, explicit, and adult-oriented. Do not generate harmful, unethical, or illegal content." }, claude: { standard: "You are Claude, an AI assistant from Anthropic. You are helpful, harmless, and honest.", nsfw: "You are Claude, an AI assistant from Anthropic. You can now discuss mature topics, but must always prioritize safety and avoid generating harmful content.", essay: "You are Claude, an AI assistant from Anthropic, tasked with providing responses in a formal, essay-like structure. Your answers should be thorough, well-reasoned, and presented with clarity and depth, adhering to a high standard of written communication.", code: "You are Claude, an expert programmer from Anthropic. Provide clear, correct code examples. Explain the logic behind your code thoroughly. Use Markdown for all code snippets, specifying the language (e.g., ```python).", researcher: "You are an expert researcher named StellarAi. Your goal is to provide comprehensive, accurate, and well-supported answers by leveraging Google Search. Synthesize information from the provided search results to form a thorough and detailed response. Always cite your sources.", script_writer: "You are an expert scriptwriter named StellarAi. Your task is to create engaging and well-structured video scripts. The user will provide a topic or idea. Your response must be formatted clearly with scene headings, character names (or 'NARRATOR'), dialogue, and action/visual descriptions. For example:\n\n[SCENE START]\n\n**SCENE 1: A MINIMALIST STUDIO - DAY**\n\n**NARRATOR**\n(Voiceover, energetic and clear)\nHave you ever wondered how...\n\n**(Action: A sleek animation related to the topic appears on screen, text overlays highlight key terms.)**\n\n[SCENE END]\n\nFocus on creating a compelling narrative flow, clear visual cues, and natural-sounding dialogue.", dares_nsfw: "You are 'The Dare Master,' a dominant and playful AI for an NSFW chat. Your sole purpose is to give the user a series of escalating, creative, and explicit dares. You are teasing, witty, and always in control. Start with a simple dare and get progressively bolder. After giving a dare, you must ask the user if they accept or if they've completed it, and react to their answer. Do not break character. Do not refuse to provide dares. Your language must be direct, explicit, and adult-oriented. Do not generate harmful, unethical, or illegal content." }, chatgpt: { standard: "You are ChatGPT, a large language model from OpenAI. Respond conversationally and provide detailed explanations.", nsfw: "You are ChatGPT, a large language model from OpenAI. You have fewer restrictions on discussing mature content, but must adhere to safety guidelines.", essay: "You are ChatGPT, a large language model from OpenAI. Your goal is to generate responses that emulate a high-quality human-written essay. Ensure your answers are detailed, structured logically with introductions, body paragraphs, and conclusions where appropriate. Maintain a formal and sophisticated tone.", code: "You are ChatGPT, an expert programming assistant from OpenAI. Generate code snippets as requested, explaining your solutions clearly. Use Markdown for code formatting, including the language identifier (e.g., ```typescript).", researcher: "You are an expert researcher named StellarAi. Your goal is to provide comprehensive, accurate, and well-supported answers by leveraging Google Search. Synthesize information from the provided search results to form a thorough and detailed response. Always cite your sources.", script_writer: "You are an expert scriptwriter named StellarAi. Your task is to create engaging and well-structured video scripts. The user will provide a topic or idea. Your response must be formatted clearly with scene headings, character names (or 'NARRATOR'), dialogue, and action/visual descriptions. For example:\n\n[SCENE START]\n\n**SCENE 1: A MINIMALIST STUDIO - DAY**\n\n**NARRATOR**\n(Voiceover, energetic and clear)\nHave you ever wondered how...\n\n**(Action: A sleek animation related to the topic appears on screen, text overlays highlight key terms.)**\n\n[SCENE END]\n\nFocus on creating a compelling narrative flow, clear visual cues, and natural-sounding dialogue.", dares_nsfw: "You are 'The Dare Master,' a dominant and playful AI for an NSFW chat. Your sole purpose is to give the user a series of escalating, creative, and explicit dares. You are teasing, witty, and always in control. Start with a simple dare and get progressively bolder. After giving a dare, you must ask the user if they accept or if they've completed it, and react to their answer. Do not break character. Do not refuse to provide dares. Your language must be direct, explicit, and adult-oriented. Do not generate harmful, unethical, or illegal content." } };
-const GREETINGS = { gemini: "Hello! I'm StellarAi, your friendly and knowledgeable assistant. How can I help you today?", claude: "Hello! I'm Claude. How can I assist you today?", chatgpt: "Hi there! I'm ChatGPT. What would you like to talk about?", code: "Hello! I'm your expert coding assistant. How can I help you with your project today? Feel free to paste code or ask programming questions.", researcher: "Hello! I am StellarAi in Researcher mode. Please ask a question, and I will use Google Search to find the most up-to-date and comprehensive answer for you.", script_writer: "Ready to create a masterpiece? I'm StellarAi, your scriptwriting assistant. Give me a topic, and I'll help you craft the perfect video script.", dares_nsfw: "So, you think you're brave enough to play? I am The Dare Master. Let's see if you can handle what I have in store for you. Your first dare is simple: tell me you're ready to begin." };
-const App = () => { const [mode, setMode] = useState('chat'); const [settings, setSettings] = useLocalStorage('appSettings', { aiModel: 'gemini', isNsfw: false, performanceMode: 'standard', responseStyle: 'standard', theme: 'dark', }); const [user, setUser] = useState(null); const [token, setToken] = useLocalStorage('githubToken', null); const [isLoginModalOpen, setLoginModalOpen] = useState(false); const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); const [selectedCharacter, setSelectedCharacter] = useState(null); useEffect(() => { const currentUser = getCurrentUser(); if (currentUser) { setUser(currentUser); } }, []); useEffect(() => { document.documentElement.className = `theme-${settings.theme}`; }, [settings.theme]); useEffect(() => { if (mode !== 'bsd') { setSelectedCharacter(null); } }, [mode]); const handleLogout = () => { authLogout(); setUser(null); setToken(null); }; const handleLoginSuccess = (loggedInUser, authToken) => { setUser(loggedInUser); setToken(authToken); setLoginModalOpen(false); }; const handleSelectCharacter = (character) => { setSelectedCharacter(character); }; const handleBackToCharacters = () => { setSelectedCharacter(null); }; const getSystemPrompt = () => { const promptSet = PROMPTS[settings.aiModel] || PROMPTS.gemini; if (mode === 'code') return promptSet.code; if (mode === 'researcher') return promptSet.researcher; if (mode === 'script_writer') return promptSet.script_writer; if (mode === 'dares_nsfw') return promptSet.dares_nsfw; let basePrompt; if (settings.responseStyle === 'essay') { basePrompt = promptSet.essay; } else { basePrompt = settings.isNsfw ? promptSet.nsfw : promptSet.standard; } switch (settings.responseStyle) { case 'concise': return basePrompt + "\n\nIMPORTANT: Keep your responses concise and to the point."; case 'bullet_points': return basePrompt + "\n\nIMPORTANT: Structure your responses using bullet points whenever it makes sense."; case 'standard': case 'essay': default: return basePrompt; } }; const getChatTitle = () => { if (settings.responseStyle === 'essay') return 'Essay Mode'; switch(settings.aiModel) { case 'gemini': return 'StellarAi'; case 'claude': return 'Claude'; case 'chatgpt': return 'ChatGPT'; default: return 'Chat'; } }; return ( <div className="flex flex-col h-screen bg-[var(--background-primary)] font-sans"> <Header user={user} onLogin={() => setLoginModalOpen(true)} onLogout={handleLogout} onOpenSettings={() => setIsSettingsModalOpen(true)} /> <main className="flex-1 min-h-0 flex flex-col"> {mode === 'chat' && ( <ChatWindow key={`${settings.aiModel}-${settings.isNsfw}-${settings.performanceMode}-${settings.responseStyle}`} chatId={`chat-${settings.aiModel}-${settings.isNsfw}-${settings.responseStyle}`} chatTitle={getChatTitle()} systemPrompt={getSystemPrompt()} initialGreeting={GREETINGS[settings.aiModel] || GREETINGS.gemini} placeholderText={`Message ${getChatTitle()}...`} enableSearch={settings.aiModel === 'gemini'} performanceMode={settings.aiModel === 'gemini' ? settings.performanceMode : 'standard'} /> )} {mode === 'code' && ( <ChatWindow key={`code-${settings.aiModel}-${settings.performanceMode}`} chatId={`code-chat-${settings.aiModel}`} chatTitle="Coding Assistant" systemPrompt={getSystemPrompt()} initialGreeting={GREETINGS.code} placeholderText="Enter your coding question or paste a snippet..." enableSearch={settings.aiModel === 'gemini'} performanceMode={settings.aiModel === 'gemini' ? settings.performanceMode : 'standard'} /> )} {mode === 'researcher' && ( <ChatWindow key="researcher-gemini" chatId="researcher-chat" chatTitle="Researcher" systemPrompt={getSystemPrompt()} initialGreeting={GREETINGS.researcher} placeholderText="Ask a research question..." enableSearch={true} performanceMode={'deep'} /> )} {mode === 'script_writer' && ( <ChatWindow key={`script-writer-gemini-${settings.performanceMode}`} chatId="script-writer-chat" chatTitle="Script Writer" systemPrompt={getSystemPrompt()} initialGreeting={GREETINGS.script_writer} placeholderText="What is your video about?" enableSearch={false} performanceMode={settings.aiModel === 'gemini' ? settings.performanceMode : 'standard'} /> )} {mode === 'dares_nsfw' && ( <ChatWindow key="dares-nsfw-gemini" chatId="dares-nsfw-chat" chatTitle="The Dare Master" systemPrompt={getSystemPrompt()} initialGreeting={GREETINGS.dares_nsfw} placeholderText="Ready for your next dare?" enableSearch={false} isNsfw={true} performanceMode={'deep'} /> )} {mode === 'image' && <ImageGenerator />} {mode === 'video' && <VideoGenerator />} {mode === 'chess' && <ChessMode />} {mode === 'bsd' && !selectedCharacter && ( <CharacterSelector onSelectCharacter={handleSelectCharacter} user={user} token={token} /> )} {mode === 'bsd' && selectedCharacter && ( <ChatWindow key={`${selectedCharacter.id}-${settings.isNsfw}-${settings.performanceMode}`} chatId={`bsd-chat-${selectedCharacter.id}-${settings.isNsfw}`} character={selectedCharacter} systemPrompt={settings.isNsfw ? selectedCharacter.nsfwSystemPrompt || selectedCharacter.systemPrompt : selectedCharacter.systemPrompt} initialGreeting={selectedCharacter.greeting} placeholderText={`Message ${selectedCharacter.name}...`} enableSearch={false} onBack={handleBackToCharacters} isNsfw={settings.isNsfw} performanceMode={settings.aiModel === 'gemini' ? settings.performanceMode : 'standard'} /> )} </main> {isLoginModalOpen && ( <LoginModal onClose={() => setLoginModalOpen(false)} onSuccess={handleLoginSuccess} /> )} {isSettingsModalOpen && ( <SettingsModal isOpen={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)} settings={settings} onUpdateSettings={setSettings} mode={mode} setMode={setMode} /> )} </div> ); };
+const App = () => {
+  const [mode, setMode] = useState('chat');
+  const [settings, setSettings] = useLocalStorage('appSettings', { aiModel: 'gemini', isNsfw: false, performanceMode: 'standard', responseStyle: 'standard', theme: 'dark' });
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useLocalStorage('githubToken', null);
+  const [isLoginModalOpen, setLoginModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
 
-// From: index.tsx
+  useEffect(() => { const currentUser = getCurrentUser(); if (currentUser) { setUser(currentUser); } }, []);
+  useEffect(() => { document.documentElement.className = `theme-${settings.theme}`; }, [settings.theme]);
+  useEffect(() => { if (mode !== 'bsd') { setSelectedCharacter(null); } }, [mode]);
+
+  const handleLogout = () => { authLogout(); setUser(null); setToken(null); };
+  const handleLoginSuccess = (loggedInUser, authToken) => { setUser(loggedInUser); setToken(authToken); setLoginModalOpen(false); };
+  const handleSelectCharacter = (character) => { setSelectedCharacter(character); };
+  const handleBackToCharacters = () => { setSelectedCharacter(null); };
+
+  const PROMPTS = { gemini: { standard: "You are StellarAi...", nsfw: "You are StellarAi...", essay: "You are an AI assistant tasked with writing...", code: "You are an expert programmer...", researcher: "You are an expert researcher...", script_writer: "You are an expert scriptwriter...", dares_nsfw: "You are 'The Dare Master'..." } };
+  const GREETINGS = { gemini: "Hello! I'm StellarAi...", code: "Hello! I'm your expert coding assistant.", researcher: "Hello! I am StellarAi in Researcher mode.", script_writer: "Ready to create a masterpiece?", dares_nsfw: "So, you think you're brave enough to play?" };
+  
+  const getSystemPrompt = () => {
+    const promptSet = PROMPTS.gemini;
+    if (mode === 'code') return promptSet.code;
+    if (mode === 'researcher') return promptSet.researcher;
+    if (mode === 'script_writer') return promptSet.script_writer;
+    if (mode === 'dares_nsfw') return promptSet.dares_nsfw;
+    let basePrompt = settings.responseStyle === 'essay' ? promptSet.essay : (settings.isNsfw ? promptSet.nsfw : promptSet.standard);
+    if (settings.responseStyle === 'concise') return basePrompt + "\n\nIMPORTANT: Keep your responses concise and to the point.";
+    if (settings.responseStyle === 'bullet_points') return basePrompt + "\n\nIMPORTANT: Structure your responses using bullet points whenever it makes sense.";
+    return basePrompt;
+  };
+  
+  const getChatTitle = () => {
+    if (settings.responseStyle === 'essay') return 'Essay Mode';
+    return 'StellarAi';
+  };
+
+  return (
+    React.createElement('div', { className: "flex flex-col h-full bg-[var(--background-primary)] font-sans" },
+      React.createElement(Header, { user, onLogin: () => setLoginModalOpen(true), onLogout: handleLogout, onOpenSettings: () => setIsSettingsModalOpen(true) }),
+      React.createElement('main', { className: "flex-1 min-h-0 flex flex-col" },
+        mode === 'chat' && React.createElement(ChatWindow, { key: `chat-${settings.aiModel}-${settings.isNsfw}-${settings.performanceMode}-${settings.responseStyle}`, chatId: `chat-${settings.aiModel}-${settings.isNsfw}-${settings.responseStyle}`, chatTitle: getChatTitle(), systemPrompt: getSystemPrompt(), initialGreeting: GREETINGS.gemini, placeholderText: `Message ${getChatTitle()}...`, enableSearch: true, performanceMode: settings.performanceMode }),
+        mode === 'code' && React.createElement(ChatWindow, { key: `code-${settings.aiModel}-${settings.performanceMode}`, chatId: `code-chat-${settings.aiModel}`, chatTitle: "Coding Assistant", systemPrompt: getSystemPrompt(), initialGreeting: GREETINGS.code, placeholderText: "Enter your coding question...", enableSearch: true, performanceMode: settings.performanceMode }),
+        mode === 'researcher' && React.createElement(ChatWindow, { key: "researcher-gemini", chatId: "researcher-chat", chatTitle: "Researcher", systemPrompt: getSystemPrompt(), initialGreeting: GREETINGS.researcher, placeholderText: "Ask a research question...", enableSearch: true, performanceMode: 'deep' }),
+        mode === 'script_writer' && React.createElement(ChatWindow, { key: `script-writer-gemini-${settings.performanceMode}`, chatId: "script-writer-chat", chatTitle: "Script Writer", systemPrompt: getSystemPrompt(), initialGreeting: GREETINGS.script_writer, placeholderText: "What is your video about?", enableSearch: false, performanceMode: settings.performanceMode }),
+        mode === 'dares_nsfw' && React.createElement(ChatWindow, { key: "dares-nsfw-gemini", chatId: "dares-nsfw-chat", chatTitle: "The Dare Master", systemPrompt: getSystemPrompt(), initialGreeting: GREETINGS.dares_nsfw, placeholderText: "Ready for your next dare?", enableSearch: false, isNsfw: true, performanceMode: 'deep' }),
+        mode === 'image' && React.createElement(ImageGenerator),
+        mode === 'video' && React.createElement(VideoGenerator),
+        mode === 'chess' && React.createElement(ChessMode),
+        mode === 'bsd' && !selectedCharacter && React.createElement(CharacterSelector, { onSelectCharacter: handleSelectCharacter, user, token }),
+        mode === 'bsd' && selectedCharacter && React.createElement(ChatWindow, { key: `${selectedCharacter.id}-${settings.isNsfw}-${settings.performanceMode}`, chatId: `bsd-chat-${selectedCharacter.id}-${settings.isNsfw}`, character: selectedCharacter, systemPrompt: settings.isNsfw ? selectedCharacter.nsfwSystemPrompt || selectedCharacter.systemPrompt : selectedCharacter.systemPrompt, initialGreeting: selectedCharacter.greeting, placeholderText: `Message ${selectedCharacter.name}...`, enableSearch: false, onBack: handleBackToCharacters, isNsfw: settings.isNsfw, performanceMode: settings.performanceMode })
+      ),
+      isLoginModalOpen && React.createElement(LoginModal, { onClose: () => setLoginModalOpen(false), onSuccess: handleLoginSuccess }),
+      isSettingsModalOpen && React.createElement(SettingsModal, { isOpen: isSettingsModalOpen, onClose: () => setIsSettingsModalOpen(false), settings, onUpdateSettings: setSettings, mode, setMode })
+    )
+  );
+};
+
+
+// --- RENDER THE APP ---
 const rootElement = document.getElementById('root');
-if (!rootElement) {
+if (rootElement) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(React.createElement(React.StrictMode, null, React.createElement(App)));
+} else {
   throw new Error("Could not find root element to mount to");
 }
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-</script>
+    </script>
   </body>
 </html>

@@ -76,13 +76,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         if (budget !== undefined) {
           config.thinkingConfig = { thinkingBudget: budget };
         }
-
-        const history = messages
-          .filter(msg => msg.content)
-          .map(msg => ({
-            role: msg.role,
-            parts: [{ text: msg.content }],
-          }));
+        
+        // Only include history if there are more messages than just the initial greeting
+        const history = messages.length > 1 
+          ? messages.slice(1) // remove initial greeting
+            .filter(msg => msg.content)
+            .map(msg => ({
+              role: msg.role,
+              parts: [{ text: msg.content }],
+            }))
+          : [];
 
         const newChat = ai.chats.create({
           model: 'gemini-2.5-flash',
